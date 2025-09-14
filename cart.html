@@ -3,16 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Perfume List</title>
+    <title>Your Cart</title>
     <link rel="icon" type="image/png" href="icon/32.png" />
     <link rel="apple-touch-icon" href="icon/180.png" />
-
     <style>
-      /* Reset */
-      a {
-        color: black;
-        font-weight: bold;
-      }
+      /* Reset and common styles */
       * {
         box-sizing: border-box;
       }
@@ -20,1744 +15,476 @@
         margin: 0;
         padding: 0;
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        background: #fff;
-        color: #222;
+        background: #f4f4f4;
+        color: #111;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-      }
-      /* --- Search Input Styles --- */
-      .search-container {
-        max-width: 600px;
-        margin: 25px auto;
-        padding: 0 15px;
         position: relative;
+        min-height: 100vh;
+        padding-bottom: 120px; /* Space for footer actions */
       }
-      #search-input {
-        width: 100%;
-        padding: 12px 40px 12px 20px;
-        font-size: 1.1rem;
-        border: 1px solid #ccc;
-        border-radius: 25px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        outline: none;
-        transition: border-color 0.3s, box-shadow 0.3s;
-      }
-      #search-input:focus {
-        border-color: #333;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      }
-      #search-clear-btn {
-        position: absolute;
-        top: 50%;
-        right: 30px;
-        transform: translateY(-50%);
-        background: #ccc;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 22px;
-        height: 22px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 16px;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        line-height: 22px;
-        transition: background-color 0.2s;
-      }
-      #search-clear-btn:hover {
-        background: #999;
-      }
-
-      /* --- Navbar Styles --- */
-      .navbar {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        padding: 15px 15px;
+      .page-header {
+        position: relative;
+        text-align: center;
+        padding: 20px 15px;
         border-bottom: 1px solid #eee;
-        background: #fff;
+        background-color: #fff;
         margin-bottom: 20px;
       }
-      .navbar button {
-        background: #f8f8f8;
-        border: 1px solid #ddd;
-        padding: 8px 16px;
-        margin: 5px;
-        cursor: pointer;
-        font-size: 1rem;
-        border-radius: 20px;
-        transition: all 0.3s ease;
-      }
-      .navbar button:hover {
-        background: #e9e9e9;
-      }
-      .navbar button.active {
-        background: #333;
-        color: #fff;
-        border-color: #333;
-      }
-      /* --- Gallery Styles --- */
-      .gallery {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 10px;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 25px;
-        min-height: 300px; /* Give gallery some height while loading */
-      }
-      @media (min-width: 768px) {
-        .gallery {
-          grid-template-columns: repeat(4, 1fr);
-          gap: 40px;
-          padding: 0 20px;
-        }
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: scale(0.98);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
-      .item {
-        position: relative;
-        overflow: hidden;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        background: #fff;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        animation: fadeIn 0.5s ease-out;
-      }
-      .item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      }
-      .item[data-stock="0"] {
-        opacity: 0.5;
-        pointer-events: none;
-      }
-      .item[data-stock="0"]::after {
-        content: "Out of Stock";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 8px 15px;
-        border-radius: 8px;
-        font-weight: bold;
-        z-index: 2;
-      }
-      .item .add-to-cart {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(0, 0, 0, 0.7);
-        color: #fff;
-        border: none;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 1.2rem;
-        transition: background 0.3s ease;
-        z-index: 3;
-      }
-      .item .add-to-cart:hover {
-        background: rgba(0, 0, 0, 0.9);
-      }
-      .item-cart-count {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background-color: #f44;
-        color: white;
-        border-radius: 50%;
-        padding: 2px 6px;
-        font-size: 0.8rem;
-        min-width: 1.2em;
-        text-align: center;
-        display: none;
-      }
-      .item img {
-        display: block;
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-        vertical-align: middle;
-        border-radius: 12px 12px 0 0;
-      }
-      .caption {
-        background: #fff;
-        color: #333;
-        padding: 16px;
-        font-size: 1rem;
-        font-weight: 600;
-        text-align: center;
-        border-top: 1px solid #eee;
-        min-height: 90px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .hidden {
-        display: none !important;
-      }
-      .no-results-message {
-        grid-column: 1 / -1;
-        text-align: center;
-        padding: 40px 15px;
-        font-size: 1.1rem;
-        color: #777;
-      }
-      .no-results-message p {
-        margin: 5px 0;
-      }
-
-      /* --- Loading State Spinner (New) --- */
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-      .gallery-loader {
-        grid-column: 1 / -1; /* Span all columns in the grid */
-        margin: 80px auto;
-        border: 6px solid #f3f3f3; /* Light grey circle */
-        border-top: 6px solid #333; /* Dark part that spins */
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite;
-      }
-
-      /* --- Mobile Navbar Optimization --- */
-      @media (max-width: 767px) {
-        .navbar {
-          flex-wrap: nowrap;
-          overflow-x: auto;
-          justify-content: flex-start;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-        }
-        .navbar::-webkit-scrollbar {
-          display: none;
-        }
-      }
-      /* --- Other styles --- */
-      .price-info,
-      .order-instructions,
-      .modal,
-      .modal-content,
-      .modal-caption,
-      .modal-close,
-      .contact-info,
-      .back-to-top,
-      .cart-button,
-      .cart-count,
-      .cart-icon,
-      .TOP,
-      .add-to-cart-confirmation {
-        /* Your existing styles are kept */
-      }
-      .price-info {
-        max-width: 600px;
-        margin: 0 auto 25px auto;
-        padding: 20px;
-        background-color: #f9f9f9;
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        text-align: center;
-      }
-      .price-info p {
-        margin: 8px 0;
-        font-size: 1rem;
-        color: #333;
-        font-weight: 500;
-      }
-      .order-instructions {
-        text-align: left;
-        width: 100%;
-        max-width: 350px;
-        margin-top: 15px;
-      }
-      .TOP {
-        text-align: center;
-      }
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 9999;
-        left: 0;
-        top: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.85);
-        justify-content: center;
-        align-items: center;
-        padding: 15px;
-      }
-      .modal.open {
-        display: flex;
-      }
-      .modal-content {
-        max-width: 90vw;
-        max-height: 90vh;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
-        background: #fff;
-        text-align: center;
-      }
-      .modal-content img {
-        max-width: 100%;
-        max-height: 80vh;
-        display: block;
-      }
-      .modal-caption {
-        padding: 12px 20px;
+      .page-header h1 {
+        margin: 0;
+        font-size: 1.8rem;
         font-weight: 700;
-        font-size: 1.2rem;
+        letter-spacing: 2px;
         color: #222;
       }
-      .modal-close {
-        position: absolute;
-        top: 15px;
-        right: 20px;
-        font-size: 2rem;
-        color: #fff;
-        cursor: pointer;
-        user-select: none;
-        transition: transform 0.3s ease;
-      }
-      .modal-close:hover {
-        transform: rotate(90deg);
-      }
-      .contact-info {
-        text-align: center;
-        padding: 30px 15px;
-        background: #fff;
-        margin-top: 20px;
-        border-top: 1px solid #eee;
-      }
-      .contact-info p {
-        margin: 5px 0;
-        font-size: 1.1rem;
-        color: #555;
-      }
-      .back-to-top {
-        display: none;
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #333;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        font-size: 1.5rem;
-        line-height: 50px;
-        text-align: center;
-        cursor: pointer;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s;
-        z-index: 1000;
-        opacity: 0.8;
-      }
-      .back-to-top:hover {
-        background-color: #555;
-        opacity: 1;
-        transform: scale(1.1);
-      }
-      .cart-button {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background-color: #ffffff;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        font-size: 1rem;
-        text-align: center;
-        cursor: pointer;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        transition: background-color 0.3s;
-      }
-      .cart-button:hover {
-        background-color: #555;
-      }
-      .cart-button.added {
-        animation: cart-pulse 0.6s ease-out;
-      }
-      @keyframes cart-pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.15);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      .cart-count {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background-color: #f44;
-        color: white;
-        border-radius: 50%;
-        padding: 2px 6px;
-        font-size: 0.8rem;
-      }
-      .cart-icon {
-        width: 40px;
-        height: 40px;
-      }
-      .add-to-cart-confirmation {
+      .back-btn {
         position: absolute;
         top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #28a745;
-        color: white;
-        padding: 6px 12px;
-        border-radius: 15px;
-        font-size: 0.9rem;
-        font-weight: bold;
-        opacity: 0;
-        transition: opacity 0.5s ease, transform 0.5s ease;
-        z-index: 10;
-        pointer-events: none;
+        left: 15px;
+        transform: translateY(-50%);
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.3s;
+        background-image: url("icon/back.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        border: none;
+        background-color: transparent;
       }
-      .add-to-cart-confirmation.show {
-        opacity: 1;
-        transform: translate(-50%, -100%);
+      .back-btn:hover {
+        transform: translateY(-50%) scale(1.1);
+      }
+      .cart-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+      .cart-items-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      .cart-items-list.two-columns {
+        @media (min-width: 768px) {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .cart-items-list.three-columns {
+        @media (min-width: 1024px) {
+          grid-template-columns: 1fr 1fr 1fr;
+        }
+      }
+      .cart-item {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: transform 0.2s ease-in-out;
+        gap: 15px;
+        padding-right: 15px;
+      }
+      .cart-item:hover {
+        transform: translateY(-3px);
+      }
+
+      .cart-item img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        flex-shrink: 0;
+        transition: width 0.3s, height 0.3s;
+      }
+      @media (min-width: 600px) {
+        .cart-item img {
+          width: 120px;
+          height: 120px;
+        }
+      }
+
+      .item-details {
+        flex-grow: 1;
+        padding: 15px 0;
+      }
+      .item-details h3 {
+        margin: 0 0 5px 0;
+        font-size: 1.1rem;
+        color: #333;
+      }
+      .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 5px;
+      }
+      .quantity-control button {
+        background: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .quantity-control button:hover {
+        background: #ddd;
+      }
+      .quantity-control span {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+      .cart-item .remove-btn {
+        margin-left: auto;
+      }
+      .remove-btn {
+        padding: 6px 10px;
+        background: #eee;
+        color: #777;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+        font-size: 0.8rem;
+      }
+      .remove-btn:hover {
+        background: #e74c3c;
+        color: #fff;
+      }
+      .empty-cart-message {
+        text-align: center;
+        color: #777;
+        font-size: 1.1rem;
+        padding: 50px 0;
+      }
+      .cart-actions {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        border-top: 1px solid #eee;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        z-index: 10;
+      }
+      .cart-actions button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: bold;
+        transition: background-color 0.2s, transform 0.2s;
+        flex-grow: 1;
+        max-width: 200px;
+      }
+      .cart-actions button:hover {
+        transform: translateY(-2px);
+      }
+      .clear-cart-btn {
+        background-color: #e7e7e7;
+        color: #555;
+      }
+      .clear-cart-btn:hover {
+        background-color: #e74c3c;
+        color: #fff;
+      }
+      .send-whatsapp-btn {
+        background-color: #25d366;
+        color: white;
+      }
+      .send-whatsapp-btn:hover {
+        background-color: #1da851;
+      }
+      .cart-summary {
+        max-width: 1200px;
+        margin: 20px auto 0;
+        padding: 15px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      .cart-summary p {
+        margin: 5px 0;
+        font-size: 1rem;
+        color: #333;
+      }
+      .cart-summary .total-count {
+        font-weight: bold;
+        color: #222;
+        font-size: 1.1rem;
       }
     </style>
   </head>
   <body>
-    <h2 class="TOP">Perfume List</h2>
+    <header class="page-header">
+      <a href="index.html" class="back-btn" aria-label="Go back"></a>
+      <h1>Your Cart</h1>
+    </header>
 
-    <div class="price-info">
-      <div>
-        <p>LV: $49</p>
-        <p>Other Brands: $35</p>
-        <p>Free Shipping</p>
-        <p>Buy more save more !</p>
-      </div>
-      <hr class="info-divider" />
-      <div class="order-instructions">
-        <p style="font-weight: 700; font-size: 1.1rem">How to Order:</p>
-        <p>1. Click the '🛒' icon on any perfume to add it to your cart.</p>
-        <p>
-          2. Click the floating '📋' button at the bottom-left to view your
-          order.
-        </p>
-      </div>
+    <div class="cart-container">
+      <ul id="cart-items-list" class="cart-items-list"></ul>
     </div>
 
-    <div class="search-container">
-      <input
-        type="search"
-        id="search-input"
-        placeholder="Search by name, brand or number..."
-      />
-      <button id="search-clear-btn" title="Clear search">&times;</button>
+    <div id="cart-summary" class="cart-summary">
+      <p id="total-count" class="total-count">Total Quantity: 0</p>
+      <p id="lv-count">LV Quantity: 0</p>
+      <p id="other-brands-count">Other Brands Quantity: 0</p>
     </div>
 
-    <div class="navbar">
-      <button data-brand="All" class="active" aria-pressed="true">
-        All Brands
+    <div class="cart-actions">
+      <button id="clear-cart-btn" class="clear-cart-btn">Clear Cart</button>
+      <button id="send-whatsapp-btn" class="send-whatsapp-btn">
+        Send on WhatsApp
       </button>
-      <button data-brand="Dior" aria-pressed="false">Dior</button>
-      <button data-brand="Chanel" aria-pressed="false">Chanel</button>
-      <button data-brand="Yves Saint Laurent" aria-pressed="false">
-        Yves Saint Laurent
-      </button>
-      <button data-brand="Louis Vuitton" aria-pressed="false">
-        Louis Vuitton
-      </button>
-      <button data-brand="Tom Ford" aria-pressed="false">Tom Ford</button>
-      <button data-brand="Gucci" aria-pressed="false">Gucci</button>
-      <button data-brand="Valentino" aria-pressed="false">Valentino</button>
-      <button data-brand="Prada" aria-pressed="false">Prada</button>
-      <button data-brand="Versace" aria-pressed="false">Versace</button>
-      <button data-brand="Creed" aria-pressed="false">Creed</button>
-      <button data-brand="Xerjoff" aria-pressed="false">Xerjoff</button>
-      <button data-brand="Kayali" aria-pressed="false">Kayali</button>
-      <button data-brand="Initio" aria-pressed="false">Initio</button>
-      <button data-brand="Jean Paul Gaultier" aria-pressed="false">
-        Jean Paul Gaultier
-      </button>
-      <button data-brand="Maison Francis Kurkdjian" aria-pressed="false">
-        Maison Francis Kurkdjian
-      </button>
-      <button data-brand="Parfums de Marly" aria-pressed="false">
-        Parfums de Marly
-      </button>
-      <button data-brand="Giorgio Armani" aria-pressed="false">Armani</button>
-      <button data-brand="Carolina Herrera" aria-pressed="false">
-        Carolina Herrera
-      </button>
-      <button data-brand="Other" aria-pressed="false">Other Brands</button>
     </div>
-
-    <div class="gallery" id="gallery">
-      <div class="gallery-loader"></div>
-    </div>
-
-    <div
-      class="modal"
-      id="modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-caption"
-    >
-      <div class="modal-close" id="modal-close" aria-label="Close modal">
-        &times;
-      </div>
-      <div class="modal-content">
-        <img src="" alt="" id="modal-img" />
-        <div class="modal-caption" id="modal-caption"></div>
-      </div>
-    </div>
-
-    <footer>
-      <div class="contact-info">
-        <a href="https://wa.me/16059024547"
-          >Need help? Contact us on WhatsApp</a
-        >
-        <p>We are available 24/7</p>
-      </div>
-    </footer>
-
-    <button id="back-to-top" class="back-to-top" aria-label="Back to top">
-      &#x25B2;
-    </button>
-
-    <button
-      class="cart-button"
-      id="cart-button"
-      title="View Your Order"
-      aria-label="View Shopping Cart"
-    >
-      <img src="icon/order.png" alt="Cart" class="cart-icon" />
-      <span id="cart-count" class="cart-count">0</span>
-    </button>
 
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        // =================================================================
-        // 1. CENTRALIZED CONFIGURATION
-        // =================================================================
-        const config = {
-          whatsappNumber: "16059024547",
-          brandAliases: {
-            ysl: "yves saint laurent",
-            lv: "Louis Vuitton",
-            tf: "tom ford",
-            jpg: "jean paul gaultier",
-            mfk: "maison francis kurkdjian",
-            pdm: "parfums de marly",
-            ch: "carolina herrera",
-            ga: "giorgio armani",
-          },
-        };
+      const cartItemsList = document.getElementById("cart-items-list");
+      const clearCartBtn = document.getElementById("clear-cart-btn");
+      const sendWhatsappBtn = document.getElementById("send-whatsapp-btn");
+      const totalCountEl = document.getElementById("total-count");
+      const lvCountEl = document.getElementById("lv-count");
+      const otherBrandsCountEl = document.getElementById("other-brands-count");
 
-        // =================================================================
-        // 2. UNIFIED PERFUME DATABASE
-        // =================================================================
-        const perfumeDB = [
-          // ... (您的99款香水数据在这里，内容保持不变) ...
-          {
-            id: "A01",
-            name: "Valentino Donna Born in Roma Intense",
-            brand: "Valentino",
-            img: "images/perfume1.webp",
-            stock: 1,
-          },
-          {
-            id: "A02",
-            name: "Valentino Donna Born in Roma",
-            brand: "Valentino",
-            img: "images/perfume2.webp",
-            stock: 1,
-          },
-          {
-            id: "A03",
-            name: "Valentino Uomo Born in Roma",
-            brand: "Valentino",
-            img: "images/perfume3.webp",
-            stock: 1,
-          },
-          {
-            id: "A04",
-            name: "Miss Dior Blooming Bouquet",
-            brand: "Dior",
-            img: "images/perfume4.webp",
-            stock: 1,
-          },
-          {
-            id: "A05",
-            name: "Lancôme La vie est belle",
-            brand: "Lancôme",
-            img: "images/perfume5.webp",
-            stock: 1,
-          },
-          {
-            id: "A06",
-            name: "Chanel Coco Mademoiselle L'eau Privee",
-            brand: "Chanel",
-            img: "images/perfume6.webp",
-            stock: 1,
-          },
-          {
-            id: "A07",
-            name: "Yves Saint Laurent Mon Paris Eau de Toilette Lumière",
-            brand: "Yves Saint Laurent",
-            img: "images/perfume7.webp",
-            stock: 1,
-          },
-          {
-            id: "A08",
-            name: "Paco Rabanne 1 Million",
-            brand: "Paco Rabanne",
-            img: "images/perfume8.webp",
-            stock: 1,
-          },
-          {
-            id: "A09",
-            name: "Creed Aventus",
-            brand: "Creed",
-            img: "images/perfume9.webp",
-            stock: 1,
-          },
-          {
-            id: "A10",
-            name: "Jean Paul Gaultier Le Male Elixir",
-            brand: "Jean Paul Gaultier",
-            img: "images/perfume10.webp",
-            stock: 0,
-          },
-          {
-            id: "A11",
-            name: "Maison Francis Kurkdjian Baccarat Rouge 540 Extrait de parfum",
-            brand: "Maison Francis Kurkdjian",
-            img: "images/perfume11.webp",
-            stock: 1,
-          },
-          {
-            id: "A12",
-            name: "Yves Saint Laurent Y Eau de Parfum",
-            brand: "Yves Saint Laurent",
-            img: "images/perfume12.webp",
-            stock: 1,
-          },
-          {
-            id: "A13",
-            name: "Chanel Bleu de Chanel Eau de Toilette",
-            brand: "Chanel",
-            img: "images/perfume13.webp",
-            stock: 1,
-          },
-          {
-            id: "A14",
-            name: "Dior Sauvage Eau de Parfum",
-            brand: "Dior",
-            img: "images/perfume14.webp",
-            stock: 1,
-          },
-          {
-            id: "A15",
-            name: "Versace Bright Crystal",
-            brand: "Versace",
-            img: "images/perfume15.webp",
-            stock: 1,
-          },
-          {
-            id: "A16",
-            name: "Yves Saint Laurent Libre Le Parfum",
-            brand: "Yves Saint Laurent",
-            img: "images/perfume16.webp",
-            stock: 1,
-          },
-          {
-            id: "A17",
-            name: "Emporio Armani Stronger With You Intensely",
-            brand: "Giorgio Armani",
-            img: "images/perfume17.webp",
-            stock: 1,
-          },
-          {
-            id: "A18",
-            name: "Prada Paradoxe Intense",
-            brand: "Prada",
-            img: "images/perfume18.webp",
-            stock: 1,
-          },
-          {
-            id: "A19",
-            name: "Tom Ford Lost Cherry",
-            brand: "Tom Ford",
-            img: "images/perfume19.webp",
-            stock: 1,
-          },
-          {
-            id: "A20",
-            name: "Emporio Armani Stronger With You Absolutely",
-            brand: "Giorgio Armani",
-            img: "images/perfume20.webp",
-            stock: 1,
-          },
-          {
-            id: "A21",
-            name: "Giorgio Armani Acqua di Giò Profondo",
-            brand: "Giorgio Armani",
-            img: "images/perfume21.webp",
-            stock: 1,
-          },
-          {
-            id: "A22",
-            name: "Tom Ford Tobacco Vanille",
-            brand: "Tom Ford",
-            img: "images/perfume22.webp",
-            stock: 1,
-          },
-          {
-            id: "A23",
-            name: "Creed Silver Mountain Water",
-            brand: "Creed",
-            img: "images/perfume23.webp",
-            stock: 1,
-          },
-          {
-            id: "A24",
-            name: "Tom Ford Fucking Fabulous",
-            brand: "Tom Ford",
-            img: "images/perfume24.webp",
-            stock: 1,
-          },
-          {
-            id: "A25",
-            name: "Dior Sauvage Elixir",
-            brand: "Dior",
-            img: "images/perfume25.webp",
-            stock: 1,
-          },
-          {
-            id: "A26",
-            name: "Parfums de Marly Perseus",
-            brand: "Parfums de Marly",
-            img: "images/perfume26.webp",
-            stock: 1,
-          },
-          {
-            id: "A27",
-            name: "Gucci Bloom",
-            brand: "Gucci",
-            img: "images/perfume27.webp",
-            stock: 1,
-          },
-          {
-            id: "A28",
-            name: "Versace Eros Eau de Parfum",
-            brand: "Versace",
-            img: "images/perfume28.webp",
-            stock: 1,
-          },
-          {
-            id: "A29",
-            name: "Chanel Chance Eau Splendide",
-            brand: "Chanel",
-            img: "images/perfume29.webp",
-            stock: 1,
-          },
-          {
-            id: "A30",
-            name: "Yves Saint Laurent Libre Eau de Parfum",
-            brand: "Yves Saint Laurent",
-            img: "images/perfume30.webp",
-            stock: 1,
-          },
-          {
-            id: "A31",
-            name: "Dior J'adore",
-            brand: "Dior",
-            img: "images/perfume31.webp",
-            stock: 1,
-          },
-          {
-            id: "A32",
-            name: "Giorgio Armani Sì Passione",
-            brand: "Giorgio Armani",
-            img: "images/perfume32.webp",
-            stock: 1,
-          },
-          {
-            id: "A33",
-            name: "Louis Vuitton Pacific Chill",
-            brand: "Louis Vuitton",
-            img: "images/perfume33.webp",
-            stock: 1,
-          },
-          {
-            id: "A34",
-            name: "Valentino Uomo Born in Roma Intense",
-            brand: "Valentino",
-            img: "images/perfume34.webp",
-            stock: 1,
-          },
-          {
-            id: "A35",
-            name: "Valentino Uomo Born in Roma Coral Fantasy",
-            brand: "Valentino",
-            img: "images/perfume35.webp",
-            stock: 1,
-          },
-          {
-            id: "A36",
-            name: "Louis Vuitton City of Stars",
-            brand: "Louis Vuitton",
-            img: "images/perfume36.webp",
-            stock: 1,
-          },
-          {
-            id: "A37",
-            name: "Carolina Herrera Very Good Girl",
-            brand: "Carolina Herrera",
-            img: "images/perfume37.webp",
-            stock: 1,
-          },
-          {
-            id: "A38",
-            name: "Carolina Herrera Good Girl",
-            brand: "Carolina Herrera",
-            img: "images/perfume38.webp",
-            stock: 1,
-          },
-          {
-            id: "A39",
-            name: "Louis Vuitton Imagination",
-            brand: "Louis Vuitton",
-            img: "images/perfume39.webp",
-            stock: 1,
-          },
-          {
-            id: "A40",
-            name: "Valentino Donna",
-            brand: "Valentino",
-            img: "images/perfume40.webp",
-            stock: 1,
-          },
-          {
-            id: "A41",
-            name: "Xerjoff Erba Pura",
-            brand: "Xerjoff",
-            img: "images/perfume41.webp",
-            stock: 1,
-          },
-          {
-            id: "A42",
-            name: "Parfums de Marly Delina",
-            brand: "Parfums de Marly",
-            img: "images/perfume42.webp",
-            stock: 1,
-          },
-          {
-            id: "A43",
-            name: "Chanel Bleu de Chanel Parfum",
-            brand: "Chanel",
-            img: "images/perfume43.webp",
-            stock: 1,
-          },
-          {
-            id: "A44",
-            name: "Creed Millésime Impérial",
-            brand: "Creed",
-            img: "images/perfume44.webp",
-            stock: 1,
-          },
-          {
-            id: "A45",
-            name: "Yves Saint Laurent MYSLF",
-            brand: "Yves Saint Laurent",
-            img: "images/perfume45.webp",
-            stock: 0,
-          },
-          {
-            id: "A46",
-            name: "Louis Vuitton Afternoon Swim",
-            brand: "Louis Vuitton",
-            img: "images/perfume46.webp",
-            stock: 1,
-          },
-          {
-            id: "A47",
-            name: "Carolina Herrera 212 Men",
-            brand: "Carolina Herrera",
-            img: "images/perfume47.webp",
-            stock: 1,
-          },
-          {
-            id: "A48",
-            name: "Burberry My Burberry Blush",
-            brand: "Burberry",
-            img: "images/perfume48.webp",
-            stock: 1,
-          },
-          {
-            id: "A49",
-            name: "Valentino Donna Born In Roma The Gold",
-            brand: "Valentino",
-            img: "images/perfume49.webp",
-            stock: 1,
-          },
-          {
-            id: "A50",
-            name: "Gucci Bloom Acqua di Fiori",
-            brand: "Gucci",
-            img: "images/perfume50.webp",
-            stock: 1,
-          },
-          {
-            id: "A51",
-            name: "Prada Luna Rossa Ocean",
-            brand: "Prada",
-            img: "images/perfume51.webp",
-            stock: 1,
-          },
-          {
-            id: "A52",
-            name: "Jean Paul Gaultier Gaultier²",
-            brand: "Jean Paul Gaultier",
-            img: "images/perfume52.webp",
-            stock: 1,
-          },
-          {
-            id: "A53",
-            name: "Initio Psychedelic Love",
-            brand: "Initio",
-            img: "images/perfume53.webp",
-            stock: 1,
-          },
-          {
-            id: "A54",
-            name: "Lattafa Asad",
-            brand: "Lattafa",
-            img: "images/perfume54.webp",
-            stock: 0,
-          },
-          {
-            id: "A55",
-            name: "Lattafa Yara",
-            brand: "Lattafa",
-            img: "images/perfume55.webp",
-            stock: 1,
-          },
-          {
-            id: "A56",
-            name: "Jean Paul Gaultier Scandal Pour Homme",
-            brand: "Jean Paul Gaultier",
-            img: "images/perfume56.webp",
-            stock: 1,
-          },
-          {
-            id: "A57",
-            name: "Yves Saint Laurent Black Opium",
-            brand: "Yves Saint Laurent",
-            img: "images/perfume57.webp",
-            stock: 1,
-          },
-          {
-            id: "A58",
-            name: "Chanel Coco Noir",
-            brand: "Chanel",
-            img: "images/perfume58.webp",
-            stock: 1,
-          },
-          {
-            id: "A59",
-            name: "Versace Eros Flame",
-            brand: "Versace",
-            img: "images/perfume59.webp",
-            stock: 1,
-          },
-          {
-            id: "A60",
-            name: "Chanel N°5 L'eau",
-            brand: "Chanel",
-            img: "images/perfume60.webp",
-            stock: 1,
-          },
-          {
-            id: "A61",
-            name: "Giorgio Armani Acqua di Giò Eau de Parfum",
-            brand: "Giorgio Armani",
-            img: "images/perfume61.webp",
-            stock: 1,
-          },
-          {
-            id: "A62",
-            name: "Ralph Lauren Polo Blue Parfum",
-            brand: "Ralph Lauren",
-            img: "images/perfume62.webp",
-            stock: 1,
-          },
-          {
-            id: "A63",
-            name: 'Jean Paul Gaultier "La Belle" Paradise Garden',
-            brand: "Jean Paul Gaultier",
-            img: "images/perfume63.webp",
-            stock: 1,
-          },
-          {
-            id: "A64",
-            name: "Creed Absolu Aventus",
-            brand: "Creed",
-            img: "images/perfume64.webp",
-            stock: 1,
-          },
-          {
-            id: "A65",
-            name: "Maison Francis Kurkdjian Oud Silk Mood",
-            brand: "Maison Francis Kurkdjian",
-            img: "images/perfume65.webp",
-            stock: 1,
-          },
-          {
-            id: "A66",
-            name: "Giorgio Armani My Way",
-            brand: "Giorgio Armani",
-            img: "images/perfume66.webp",
-            stock: 1,
-          },
-          {
-            id: "A67",
-            name: "Gucci Guilty Parfum Pour Homme",
-            brand: "Gucci",
-            img: "images/perfume67.webp",
-            stock: 1,
-          },
-          {
-            id: "A68",
-            name: "Parfums de Marly Althaïr",
-            brand: "Parfums de Marly",
-            img: "images/perfume68.webp",
-            stock: 1,
-          },
-          {
-            id: "A69",
-            name: "Dior Hypnotic Poison",
-            brand: "Dior",
-            img: "images/perfume69.webp",
-            stock: 1,
-          },
-          {
-            id: "A70",
-            name: 'Jean Paul Gaultier "Le Beau" Le Parfum',
-            brand: "Jean Paul Gaultier",
-            img: "images/perfume70.webp",
-            stock: 0,
-          },
-          {
-            id: "A71",
-            name: "Louis Vuitton California Dream",
-            brand: "Louis Vuitton",
-            img: "images/perfume71.webp",
-            stock: 1,
-          },
-          {
-            id: "A72",
-            name: "Maison Francis Kurkdjian Baccarat Rouge 540",
-            brand: "Maison Francis Kurkdjian",
-            img: "images/perfume72.webp",
-            stock: 1,
-          },
-          {
-            id: "A73",
-            name: "Parfums de Marly Pegasus",
-            brand: "Parfums de Marly",
-            img: "images/perfume73.webp",
-            stock: 1,
-          },
-          {
-            id: "A74",
-            name: "Chanel N°5",
-            brand: "Chanel",
-            img: "images/perfume74.webp",
-            stock: 1,
-          },
-          {
-            id: "A75",
-            name: "Creed Himalaya",
-            brand: "Creed",
-            img: "images/perfume75.webp",
-            stock: 1,
-          },
-          {
-            id: "A76",
-            name: "Tom Ford Oud Wood",
-            brand: "Tom Ford",
-            img: "images/perfume76.webp",
-            stock: 1,
-          },
-          {
-            id: "A77",
-            name: "Carolina Herrera Good Girl Dazzling Garden",
-            brand: "Carolina Herrera",
-            img: "images/perfume77.webp",
-            stock: 1,
-          },
-          {
-            id: "A78",
-            name: "Chanel N°19",
-            brand: "Chanel",
-            img: "images/perfume78.webp",
-            stock: 1,
-          },
-          {
-            id: "A79",
-            name: "Creed Love in White for Summer",
-            brand: "Creed",
-            img: "images/perfume79.webp",
-            stock: 0,
-          },
-          {
-            id: "A80",
-            name: "Yves Saint Laurent Black Opium Over Red",
-            brand: "Yves Saint Laurent",
-            img: "images/perfume80.webp",
-            stock: 1,
-          },
-          {
-            id: "A81",
-            name: "Tom Ford Vanilla Sex",
-            brand: "Tom Ford",
-            img: "images/perfume81.webp",
-            stock: 1,
-          },
-          {
-            id: "A82",
-            name: "Tom Ford Ombré Leather",
-            brand: "Tom Ford",
-            img: "images/perfume82.webp",
-            stock: 1,
-          },
-          {
-            id: "A83",
-            name: "Tom Ford Bitter Peach",
-            brand: "Tom Ford",
-            img: "images/perfume83.webp",
-            stock: 1,
-          },
-          {
-            id: "A84",
-            name: "Tom Ford Neroli Portofino",
-            brand: "Tom Ford",
-            img: "images/perfume84.webp",
-            stock: 1,
-          },
-          {
-            id: "A85",
-            name: "Initio Oud for Greatness",
-            brand: "Initio",
-            img: "images/perfume85.webp",
-            stock: 1,
-          },
-          {
-            id: "A86",
-            name: "Louis Vuitton L'Immensité",
-            brand: "Louis Vuitton",
-            img: "images/perfume86.webp",
-            stock: 1,
-          },
-          {
-            id: "A87",
-            name: "Ralph Lauren Polo Red",
-            brand: "Ralph Lauren",
-            img: "images/perfume87.webp",
-            stock: 1,
-          },
-          {
-            id: "A88",
-            name: "Parfums de Marly Layton",
-            brand: "Parfums de Marly",
-            img: "images/perfume88.webp",
-            stock: 1,
-          },
-          {
-            id: "A89",
-            name: "Chanel Chance Eau de Toilette",
-            brand: "Chanel",
-            img: "images/perfume89.webp",
-            stock: 1,
-          },
-          {
-            id: "A90",
-            name: "Le Labo Santal 33",
-            brand: "Le Labo",
-            img: "images/perfume90.webp",
-            stock: 0,
-          },
-          {
-            id: "A91",
-            name: "Burberry Her Elixir de Parfum",
-            brand: "Burberry",
-            img: "images/perfume91.webp",
-            stock: 0,
-          },
-          {
-            id: "A92",
-            name: "Hugo Boss Boss Bottled",
-            brand: "Hugo Boss",
-            img: "images/perfume92.webp",
-            stock: 1,
-          },
-          {
-            id: "A93",
-            name: "Carolina Herrera Good Girl Blush",
-            brand: "Carolina Herrera",
-            img: "images/perfume93.webp",
-            stock: 0,
-          },
-          {
-            id: "A94",
-            name: "Hermès Terre d'Hermès",
-            brand: "Hermès",
-            img: "images/perfume94.webp",
-            stock: 1,
-          },
-          {
-            id: "A95",
-            name: "Chanel Gabrielle Essence",
-            brand: "Chanel",
-            img: "images/perfume95.webp",
-            stock: 1,
-          },
-          {
-            id: "A96",
-            name: "Byredo Rose of No Man's Land",
-            brand: "Byredo",
-            img: "images/perfume96.webp",
-            stock: 1,
-          },
-          {
-            id: "A97",
-            name: "Jo Malone Wood Sage & Sea Salt Cologne",
-            brand: "Jo Malone",
-            img: "images/perfume97.webp",
-            stock: 1,
-          },
-          {
-            id: "A98",
-            name: "Creed Love in White",
-            brand: "Creed",
-            img: "images/perfume98.webp",
-            stock: 1,
-          },
-          {
-            id: "A99",
-            name: "Valentino Donna Born in Roma Coral Fantasy",
-            brand: "Valentino",
-            img: "images/perfume99.webp",
-            stock: 1,
-          },
-          {
-            id: "A100",
-            name: "Bvlgari Omnia Amethyste",
-            brand: "BVLGARI",
-            img: "images/perfume100.webp",
-            stock: 1,
-          },
-          {
-            id: "A101",
-            name: "Xerjoff Naxos",
-            brand: "Xerjoff",
-            img: "images/perfume101.webp",
-            stock: 1,
-          },
-          {
-            id: "A102",
-            name: "Kayali Vanilla Candy Rock Sugar | 42",
-            brand: "Kayali",
-            img: "images/perfume102.webp",
-            stock: 1,
-          },
-          {
-            id: "A103",
-            name: "Amouage Blossom Love",
-            brand: "Amouage",
-            img: "images/perfume103.webp",
-            stock: 1,
-          },
-          {
-            id: "A104",
-            name: "Louis Vuitton On The Beach",
-            brand: "Louis Vuitton",
-            img: "images/perfume104.webp",
-            stock: 1,
-          },
-          {
-            id: "A105",
-            name: "Gucci Bamboo",
-            brand: "Gucci",
-            img: "images/perfume105.webp",
-            stock: 1,
-          },
-          {
-            id: "A106",
-            name: "Givenchy Gentleman",
-            brand: "Givenchy",
-            img: "images/perfume106.webp",
-            stock: 1,
-          },
-          {
-            id: "A107",
-            name: "Paco Rabanne Invictus",
-            brand: "Paco Rabanne",
-            img: "images/perfume107.webp",
-            stock: 1,
-          },
-          {
-            id: "A108",
-            name: "Tom Ford Electric Cherry",
-            brand: "Tom Ford",
-            img: "images/perfume108.webp",
-            stock: 1,
-          },
-          {
-            id: "A109",
-            name: "Kayali Fleur Majesty Rose Royale | 31",
-            brand: "Kayali",
-            img: "images/perfume109.webp",
-            stock: 1,
-          },
-          {
-            id: "A110",
-            name: "Xerjoff Renaissance",
-            brand: "Xerjoff",
-            img: "images/perfume110.webp",
-            stock: 1,
-          },
-          {
-            id: "A111",
-            name: "Kayali Yum Pistachio Gelato | 33",
-            brand: "Kayali",
-            img: "images/perfume111.webp",
-            stock: 1,
-          },
-          {
-            id: "A112",
-            name: "Tom Ford Fucking Fabulous",
-            brand: "Tom Ford",
-            img: "images/perfume112.webp",
-            stock: 1,
-          },
-          {
-            id: "A113",
-            name: "Kilian Angels' Share",
-            brand: "Kilian",
-            img: "images/perfume113.webp",
-            stock: 1,
-          },
-          {
-            id: "A114",
-            name: "Initio Side Effect",
-            brand: "Initio",
-            img: "images/perfume114.webp",
-            stock: 1,
-          },
-          {
-            id: "A115",
-            name: "Maison Francis Kurkdjian Grand Soir",
-            brand: "Maison Francis Kurkdjian",
-            img: "images/perfume115.webp",
-            stock: 1,
-          },
-          {
-            id: "A116",
-            name: "Gucci Bamboo",
-            brand: "Gucci",
-            img: "images/perfume116.webp",
-            stock: 1,
-          },
-          {
-            id: "A117",
-            name: "Versace Dylan Blue",
-            brand: "Versace",
-            img: "images/perfume117.webp",
-            stock: 1,
-          },
-          {
-            id: "A118",
-            name: "Armani Code",
-            brand: "Giorgio Armani",
-            img: "images/perfume118.webp",
-            stock: 1,
-          },
-          {
-            id: "A119",
-            name: "Dior Bonne Étoile",
-            brand: "Dior",
-            img: "images/perfume119.webp",
-            stock: 1,
-          },
-          {
-            id: "A120",
-            name: "Louis Vuitton Ombre Nomade",
-            brand: "Louis Vuitton",
-            img: "images/perfume120.webp",
-            stock: 1,
-          },
-          {
-            id: "A121",
-            name: "Amouage Honour",
-            brand: "Amouage",
-            img: "images/perfume121.webp",
-            stock: 1,
-          },
-          {
-            id: "A122",
-            name: "Amouage Guidance 46",
-            brand: "Amouage",
-            img: "images/perfume122.webp",
-            stock: 1,
-          },
-          {
-            id: "A123",
-            name: "Amouage Interlude Black Iris",
-            brand: "Amouage",
-            img: "images/perfume123.webp",
-            stock: 1,
-          },
-          {
-            id: "A124",
-            name: "Gucci Flora Gorgeous Jasmine",
-            brand: "Gucci",
-            img: "images/perfume124.webp",
-            stock: 1,
-          },
-          {
-            id: "A125",
-            name: "Gucci Flora Gorgeous Gardenia",
-            brand: "Gucci",
-            img: "images/perfume125.webp",
-            stock: 1,
-          },
-          {
-            id: "A126",
-            name: "Azzaro The Most Wanted",
-            brand: "Azzaro",
-            img: "images/perfume126.webp",
-            stock: 1,
-          },
+      const whatsappNumber = "16059024547";
+
+      const BRANDS = [
+        "Dior",
+        "Chanel",
+        "Yves Saint Laurent",
+        "Louis Vuitton",
+        "Tom Ford",
+        "Gucci",
+        "Valentino",
+        "Prada",
+        "Versace",
+        "Creed",
+        "Jean Paul Gaultier",
+        "Maison Francis Kurkdjian",
+        "Parfums de Marly",
+        "Giorgio Armani",
+        "Emporio Armani",
+        "Carolina Herrera",
+        "Lancôme",
+        "Paco Rabanne",
+        "Xerjoff",
+        "Initio",
+        "Lattafa",
+        "Ralph Lauren",
+        "Burberry",
+        "Le Labo",
+        "Hugo Boss",
+        "Hermès",
+        "Byredo",
+        "Jo Malone",
+      ];
+
+      function loadCartFromLocalStorage() {
+        const storedCart = localStorage.getItem("perfumeCart");
+        return storedCart ? JSON.parse(storedCart) : [];
+      }
+
+      function saveCartToLocalStorage(cart) {
+        localStorage.setItem("perfumeCart", JSON.stringify(cart));
+        window.dispatchEvent(new Event("storage"));
+      }
+
+      function getShortCaption(fullCaption) {
+        const captionParts = fullCaption.split(" - ");
+        if (captionParts.length < 2) return fullCaption;
+        const itemNumber = captionParts[0];
+        const fullName = captionParts.slice(1).join(" - ");
+        const sortedBrands = [...BRANDS].sort((a, b) => b.length - a.length);
+        const foundBrand = sortedBrands.find((brand) =>
+          fullName.toLowerCase().includes(brand.toLowerCase())
+        );
+        return foundBrand ? `${itemNumber} - ${foundBrand}` : fullCaption;
+      }
+
+      function renderCartItems() {
+        let cartItems = loadCartFromLocalStorage();
+        cartItemsList.innerHTML = "";
+
+        cartItemsList.className = "cart-items-list"; // Reset classes
+        const itemCount = cartItems.length;
+        if (itemCount > 12) {
+          cartItemsList.classList.add("three-columns");
+        } else if (itemCount > 6) {
+          cartItemsList.classList.add("two-columns");
+        }
+
+        if (cartItems.length === 0) {
+          cartItemsList.innerHTML =
+            "<p class='empty-cart-message'>Your cart is empty.</p>";
+        } else {
+          cartItems.sort((a, b) => {
+            const getNumber = (str) =>
+              parseInt(str.match(/\d+/)?.[0] || "0", 10);
+            return getNumber(a.caption) - getNumber(b.caption);
+          });
+
+          cartItems.forEach((item, index) => {
+            const li = document.createElement("li");
+            li.className = "cart-item";
+            const displayCaption = getShortCaption(item.caption);
+
+            li.innerHTML = `
+              <img src="${item.img}" alt="${item.name}" loading="lazy">
+              <div class="item-details">
+                <h3>${displayCaption}</h3>
+                <div class="quantity-control">
+                  <button class="decrease-quantity" data-index="${index}">-</button>
+                  <span>${item.quantity}</span>
+                  <button class="increase-quantity" data-index="${index}">+</button>
+                </div>
+              </div>
+              <button class="remove-btn" data-index="${index}">Remove</button>
+            `;
+            cartItemsList.appendChild(li);
+          });
+        }
+        updateCartSummary();
+      }
+
+      function updateCartSummary() {
+        let cartItems = loadCartFromLocalStorage();
+        let totalCount = 0;
+        let lvCount = 0;
+        let otherBrandsCount = 0;
+
+        cartItems.forEach((item) => {
+          totalCount += item.quantity;
+          if (item.caption.toLowerCase().includes("louis vuitton")) {
+            lvCount += item.quantity;
+          } else {
+            otherBrandsCount += item.quantity;
+          }
+        });
+
+        totalCountEl.textContent = `Total Quantity: ${totalCount}`;
+        lvCountEl.textContent = `LV Quantity: ${lvCount}`;
+        otherBrandsCountEl.textContent = `Other Brands Quantity: ${otherBrandsCount}`;
+
+        return { totalCount, lvCount, otherBrandsCount };
+      }
+
+      function updateQuantity(index, change) {
+        let cartItems = loadCartFromLocalStorage();
+        const sortedItems = [...cartItems].sort((a, b) => {
+          const getNumber = (str) => parseInt(str.match(/\d+/)?.[0] || "0", 10);
+          return getNumber(a.caption) - getNumber(b.caption);
+        });
+
+        const itemToUpdate = sortedItems[index];
+
+        if (itemToUpdate) {
+          itemToUpdate.quantity = Math.max(0, itemToUpdate.quantity + change);
+          const originalItemIndex = cartItems.findIndex(
+            (item) => item.caption === itemToUpdate.caption
+          );
+          if (originalItemIndex !== -1) {
+            cartItems[originalItemIndex].quantity = itemToUpdate.quantity;
+          }
+          const updatedCart = cartItems.filter((item) => item.quantity > 0);
+          saveCartToLocalStorage(updatedCart);
+          renderCartItems();
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", renderCartItems);
+
+      cartItemsList.addEventListener("click", (e) => {
+        const index = e.target.getAttribute("data-index");
+        if (index === null) return;
+
+        if (e.target.classList.contains("remove-btn")) {
+          if (!confirm("Are you sure you want to remove this item?")) return;
+
+          let cartItems = loadCartFromLocalStorage();
+          const sortedItems = [...cartItems].sort((a, b) => {
+            const getNumber = (str) =>
+              parseInt(str.match(/\d+/)?.[0] || "0", 10);
+            return getNumber(a.caption) - getNumber(b.caption);
+          });
+          const itemToRemove = sortedItems[index];
+
+          if (itemToRemove) {
+            const updatedCart = cartItems.filter(
+              (item) => item.caption !== itemToRemove.caption
+            );
+            saveCartToLocalStorage(updatedCart);
+            renderCartItems();
+          }
+        } else if (e.target.classList.contains("increase-quantity")) {
+          updateQuantity(parseInt(index), 1);
+        } else if (e.target.classList.contains("decrease-quantity")) {
+          updateQuantity(parseInt(index), -1);
+        }
+      });
+
+      clearCartBtn.addEventListener("click", () => {
+        if (!confirm("Are you sure you want to clear your cart?")) return;
+
+        localStorage.removeItem("perfumeCart");
+        window.dispatchEvent(new Event("storage"));
+        renderCartItems();
+      });
+
+      sendWhatsappBtn.addEventListener("click", () => {
+        const cartItems = loadCartFromLocalStorage();
+        if (cartItems.length === 0) {
+          alert(
+            "Your cart is empty. Please add items before sending an order."
+          );
+          return;
+        }
+
+        const originalText = sendWhatsappBtn.textContent;
+        sendWhatsappBtn.textContent = "Preparing...";
+        sendWhatsappBtn.disabled = true;
+
+        const summary = updateCartSummary();
+        cartItems.sort((a, b) => {
+          const getNumber = (str) => parseInt(str.match(/\d+/)?.[0] || "0", 10);
+          return getNumber(a.caption) - getNumber(b.caption);
+        });
+
+        const messageLines = cartItems.map(
+          (item) => `* ${item.caption} (${item.quantity} bottles)`
+        );
+
+        const summaryLines = [
+          `Total Quantity: ${summary.totalCount} bottles`,
+          `LV Quantity: ${summary.lvCount} bottles`,
+          `Other Brands Quantity: ${summary.otherBrandsCount} bottles`,
         ];
 
-        const { whatsappNumber, brandAliases } = config;
-        const cartButton = document.getElementById("cart-button");
-        const cartCount = document.getElementById("cart-count");
-        const gallery = document.getElementById("gallery");
-        const modal = document.getElementById("modal");
-        const modalImg = document.getElementById("modal-img");
-        const modalCaption = document.getElementById("modal-caption");
-        const modalClose = document.getElementById("modal-close");
-        const navbar = document.querySelector(".navbar");
-        const brandButtons = navbar.querySelectorAll("button[data-brand]");
-        const backToTopButton = document.getElementById("back-to-top");
-        const searchInput = document.getElementById("search-input");
-        const searchClearBtn = document.getElementById("search-clear-btn");
-        let items = [];
-        let cartItems = [];
+        const message = `Hello, I am interested in the following perfumes:%0A${messageLines.join(
+          "%0A"
+        )}%0A%0A---%0A*Order Summary*%0A${summaryLines.join(
+          "%0A"
+        )}%0A%0APlease provide a quote. Thank you!`;
 
-        function renderGallery(perfumeList) {
-          gallery.innerHTML = "";
-          perfumeList.forEach((perfume) => {
-            const item = document.createElement("div");
-            item.className = "item";
-            item.tabIndex = 0;
-            item.dataset.name = perfume.id;
-            item.dataset.img = perfume.img;
-            item.dataset.brand = perfume.brand;
-            item.dataset.stock = perfume.stock;
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
+        window.open(whatsappUrl, "_blank");
 
-            item.innerHTML = `
-                  <img src="${perfume.img}" alt="${perfume.id}" loading="lazy" decoding="async"/>
-                  <div class="caption">${perfume.id} - ${perfume.name}</div>
-                  <button class="add-to-cart" title="Add to Cart" aria-label="Add ${perfume.id} to cart">
-                    🛒 <span class="item-cart-count"></span>
-                  </button>
-              `;
-            gallery.appendChild(item);
-          });
-          items = Array.from(gallery.querySelectorAll(".item"));
-          renderItemCounts();
-          handleNoResults();
-        }
-
-        function loadCartFromLocalStorage() {
-          const storedCart = localStorage.getItem("perfumeCart");
-          cartItems = storedCart ? JSON.parse(storedCart) : [];
-        }
-
-        function saveCartToLocalStorage() {
-          localStorage.setItem("perfumeCart", JSON.stringify(cartItems));
-        }
-
-        function updateCartCount() {
-          cartCount.textContent = cartItems.reduce(
-            (total, item) => total + item.quantity,
-            0
-          );
-        }
-
-        function renderItemCounts() {
-          items.forEach((item) => {
-            const itemName = item.dataset.name;
-            const itemCartCountBadge = item.querySelector(".item-cart-count");
-            const itemInCart = cartItems.find(
-              (cartItem) => cartItem.name === itemName
-            );
-            if (itemInCart && itemInCart.quantity > 0) {
-              itemCartCountBadge.textContent = itemInCart.quantity;
-              itemCartCountBadge.style.display = "block";
-            } else {
-              itemCartCountBadge.style.display = "none";
-            }
-          });
-        }
-
-        window.addEventListener("storage", () => {
-          loadCartFromLocalStorage();
-          updateCartCount();
-          renderItemCounts();
-        });
-
-        function showConfirmation(button) {
-          const confirmation = document.createElement("div");
-          confirmation.textContent = "Added!";
-          confirmation.className = "add-to-cart-confirmation";
-          const itemElement = button.closest(".item");
-          itemElement.appendChild(confirmation);
-          setTimeout(() => confirmation.classList.add("show"), 10);
-          setTimeout(() => confirmation.remove(), 1500);
-        }
-
-        function pulseCartButton() {
-          cartButton.classList.add("added");
-          setTimeout(() => cartButton.classList.remove("added"), 600);
-        }
-
-        gallery.addEventListener("click", function (e) {
-          const button = e.target.closest(".add-to-cart");
-          if (button) {
-            e.stopPropagation();
-            const item = button.closest(".item");
-            const perfumeData = perfumeDB.find(
-              (p) => p.id === item.dataset.name
-            );
-            if (!perfumeData) return;
-            const { id, name, img } = perfumeData;
-            const existingItem = cartItems.find(
-              (cartItem) => cartItem.name === id
-            );
-            if (existingItem) {
-              existingItem.quantity++;
-            } else {
-              cartItems.push({
-                name: id,
-                caption: `${id} - ${name}`,
-                img,
-                quantity: 1,
-              });
-            }
-            saveCartToLocalStorage();
-            updateCartCount();
-            renderItemCounts();
-            showConfirmation(button);
-            pulseCartButton();
-          }
-        });
-
-        cartButton.addEventListener("click", () => {
-          window.location.href = "cart.html";
-        });
-
-        gallery.addEventListener("click", (e) => {
-          const item = e.target.closest(".item");
-          if (item && !e.target.closest(".add-to-cart")) {
-            modalImg.src = item.dataset.img;
-            modalImg.alt = item.dataset.name;
-            modalCaption.textContent =
-              item.querySelector(".caption").textContent;
-            modal.classList.add("open");
-          }
-        });
-
-        modalClose.addEventListener("click", () =>
-          modal.classList.remove("open")
-        );
-        modal.addEventListener("click", (e) => {
-          if (e.target === modal) modal.classList.remove("open");
-        });
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") modal.classList.remove("open");
-        });
-
-        const dedicatedBrands = [
-          ...new Set(perfumeDB.map((p) => p.brand)),
-        ].filter(
-          (b) =>
-            b &&
-            ![
-              "Lancôme",
-              "Paco Rabanne",
-              "Xerjoff",
-              "Initio",
-              "Lattafa",
-              "Ralph Lauren",
-              "Burberry",
-              "Le Labo",
-              "Hugo Boss",
-              "Hermès",
-              "Byredo",
-              "Jo Malone",
-            ].includes(b)
-        );
-
-        function filterAndSearch() {
-          const activeBrandBtn = navbar.querySelector("button.active");
-          const selectedBrand = activeBrandBtn
-            ? activeBrandBtn.dataset.brand
-            : "All";
-          let searchTerm = searchInput.value.toLowerCase().trim();
-          if (brandAliases[searchTerm]) {
-            searchTerm = brandAliases[searchTerm];
-          }
-          let filteredList = perfumeDB;
-          if (selectedBrand !== "All") {
-            if (selectedBrand === "Other") {
-              filteredList = perfumeDB.filter(
-                (p) => !dedicatedBrands.includes(p.brand)
-              );
-            } else {
-              filteredList = perfumeDB.filter((p) => p.brand === selectedBrand);
-            }
-          }
-          if (searchTerm) {
-            filteredList = filteredList.filter(
-              (p) =>
-                p.name.toLowerCase().includes(searchTerm) ||
-                p.id.toLowerCase().includes(searchTerm) ||
-                p.brand.toLowerCase().includes(searchTerm)
-            );
-          }
-          renderGallery(filteredList);
-          localStorage.setItem("lastFilterBrand", selectedBrand);
-          localStorage.setItem("lastSearchTerm", searchInput.value.trim());
-        }
-
-        navbar.addEventListener("click", (e) => {
-          const button = e.target.closest("button[data-brand]");
-          if (!button) return;
-          brandButtons.forEach((btn) => {
-            btn.classList.remove("active");
-            btn.setAttribute("aria-pressed", "false");
-          });
-          button.classList.add("active");
-          button.setAttribute("aria-pressed", "true");
-          searchInput.value = "";
-          searchClearBtn.style.display = "none";
-          filterAndSearch();
-        });
-
-        searchInput.addEventListener("input", () => {
-          brandButtons.forEach((btn) => {
-            btn.classList.remove("active");
-            btn.setAttribute("aria-pressed", "false");
-          });
-          const allButton = navbar.querySelector('button[data-brand="All"]');
-          allButton.classList.add("active");
-          allButton.setAttribute("aria-pressed", "true");
-          searchClearBtn.style.display = searchInput.value ? "flex" : "none";
-          filterAndSearch();
-        });
-
-        searchClearBtn.addEventListener("click", () => {
-          searchInput.value = "";
-          searchInput.dispatchEvent(new Event("input"));
-        });
-
-        function handleNoResults() {
-          const visibleItems = gallery.children.length;
-          let messageEl = gallery.querySelector(".no-results-message");
-          if (visibleItems === 0 && !messageEl) {
-            messageEl = document.createElement("div");
-            messageEl.className = "no-results-message";
-            let searchTerm = searchInput.value;
-            let suggestionHTML = searchTerm
-              ? `<p>No results found for "<strong>${searchTerm}</strong>".</p><p>Please check your spelling or try another keyword.</p>`
-              : `<p>No items found for this filter.</p>`;
-            messageEl.innerHTML = suggestionHTML;
-            gallery.appendChild(messageEl);
-          } else if (visibleItems > 0 && messageEl) {
-            messageEl.remove();
-          }
-        }
-
-        // --- 核心修正 ---
-        // 将事件监听器绑定到 window 对象
-        window.addEventListener("scroll", () => {
-          if (window.pageYOffset > 300) {
-            backToTopButton.style.display = "block";
-          } else {
-            backToTopButton.style.display = "none";
-          }
-        });
-
-        backToTopButton.addEventListener("click", () => {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-
-        function applyLastState() {
-          const lastBrand = localStorage.getItem("lastFilterBrand") || "All";
-          const lastSearch = localStorage.getItem("lastSearchTerm") || "";
-          if (lastSearch) {
-            searchInput.value = lastSearch;
-            searchInput.dispatchEvent(new Event("input"));
-          } else {
-            brandButtons.forEach((btn) => {
-              const isMatch = btn.dataset.brand === lastBrand;
-              btn.classList.toggle("active", isMatch);
-              btn.setAttribute("aria-pressed", isMatch);
-            });
-            filterAndSearch();
-          }
-        }
-
-        // Initial Load
-        loadCartFromLocalStorage();
-        updateCartCount();
-        applyLastState();
+        setTimeout(() => {
+          sendWhatsappBtn.textContent = originalText;
+          sendWhatsappBtn.disabled = false;
+        }, 1000);
       });
     </script>
   </body>
