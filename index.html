@@ -541,6 +541,153 @@
         background-color: #f9f9f9;
         cursor: pointer;
       }
+      /* =========================================
+         MOBILE UX OPTIMIZATIONS (2025 UPDATE)
+         ========================================= */
+
+      /* 1. 搜索栏吸顶优化 (Sticky Search) */
+      .search-container {
+        max-width: 600px;
+        /* 修改 margin 为 padding 配合吸顶效果，避免跳动 */
+        margin: 0 auto;
+        padding: 15px 15px;
+        position: sticky; /* 关键属性 */
+        top: 0;
+        z-index: 100; /* 保证层级最高 */
+        background: #fff; /* 防止背景透明 */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* 吸顶时加一点阴影 */
+      }
+
+      /* 2. 品牌导航栏横向滑动 (Horizontal Scroll Navbar) */
+      .navbar {
+        display: flex;
+        justify-content: flex-start; /* 从左开始排列 */
+        flex-wrap: nowrap; /* 禁止换行！ */
+        overflow-x: auto; /* 允许横向滚动 */
+        padding: 10px 15px;
+        border-bottom: 1px solid #eee;
+        background: #fff;
+        gap: 10px; /* 按钮间距 */
+        -webkit-overflow-scrolling: touch; /* iOS 惯性滚动 */
+        scrollbar-width: none; /* Firefox 隐藏滚动条 */
+      }
+
+      /* === 方案 2：极细滚动条 (Thin Scrollbar) === */
+      .navbar::-webkit-scrollbar {
+        display: block; /* 显示滚动条 */
+        height: 3px; /* 高度极细 */
+      }
+      .navbar::-webkit-scrollbar-track {
+        background: transparent; /* 轨道透明 */
+      }
+      .navbar::-webkit-scrollbar-thumb {
+        background-color: #ddd; /* 颜色浅灰 */
+        border-radius: 10px; /* 圆角 */
+      }
+
+      .navbar button {
+        flex: 0 0 auto; /* 防止按钮被压缩 */
+        margin: 0; /* 使用 gap 控制间距，去掉 margin */
+        white-space: nowrap; /* 防止文字换行 */
+        font-size: 0.95rem; /* 字体稍微改小一点点适应单行 */
+        padding: 8px 14px;
+      }
+
+      /* 3. 商品列表间距优化 (Grid Spacing) */
+      .gallery {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 10px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px; /* 手机端间距缩小到 10px */
+        min-height: 300px;
+      }
+      /* 平板/桌面端保持大间距 */
+      @media (min-width: 768px) {
+        .gallery {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 40px;
+          padding: 0 20px;
+        }
+      }
+
+      /* 4. 按钮位置优化 (Thumb Zone) */
+      /* 购物车按钮 - 移至右下角 (拇指热区) */
+      .cart-button {
+        position: fixed;
+        bottom: 30px;
+        right: 20px; /* 改为右侧 */
+        left: auto; /* 清除左侧定位 */
+        width: 60px; /*稍微加大 */
+        height: 60px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+      /* 购物车图标大小适配 */
+      .cart-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+      /* 回到顶部按钮 - 移至左下角 (避免误触) */
+      .back-to-top {
+        bottom: 35px; /* 稍微比购物车高一点点或者对齐 */
+        left: 20px; /* 改为左侧 */
+        right: auto; /* 清除右侧定位 */
+        width: 45px;
+        height: 45px;
+        line-height: 45px;
+        font-size: 1.2rem;
+        opacity: 0.7;
+      }
+
+      /* 5. 底部抽屉式弹窗 (Mobile Bottom Sheet Modal) */
+      @media (max-width: 767px) {
+        .modal {
+          align-items: flex-end; /* 内容靠底部对齐 */
+          padding: 0; /* 移除内边距 */
+        }
+
+        .modal-content {
+          width: 100%;
+          max-width: 100%; /* 占满宽度 */
+          border-radius: 20px 20px 0 0; /* 只有上方有圆角 */
+          margin: 0;
+          max-height: 85vh; /* 最大高度限制 */
+          animation: slideUp 0.3s ease-out; /* 滑出动画 */
+          padding-bottom: 30px; /* 底部给 iPhone Home条留点空间 */
+        }
+
+        /* 图片在抽屉中稍微缩小，留空间给文字 */
+        .modal-content img {
+          max-height: 50vh;
+          width: 100%;
+          object-fit: contain;
+          background: #f9f9f9;
+        }
+
+        @keyframes slideUp {
+          from {
+            transform: translateY(100%);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+
+        /* 关闭按钮稍微调整位置 */
+        .modal-close {
+          top: 10px;
+          right: 15px;
+          color: #333; /* 在白色背景上改用深色 */
+          background: rgba(255, 255, 255, 0.8);
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 30px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -792,6 +939,22 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         // =================================================================
+        // === 方案 1: 品牌栏自动滑动提示 (Nudge Animation) ===
+        // =================================================================
+        const brandNav = document.getElementById("brand-navbar");
+        if (brandNav) {
+          setTimeout(() => {
+            // 1. 向右滑一点点 (60px)
+            brandNav.scrollTo({ left: 60, behavior: "smooth" });
+
+            // 2. 0.8秒后自动滑回来
+            setTimeout(() => {
+              brandNav.scrollTo({ left: 0, behavior: "smooth" });
+            }, 800);
+          }, 1000); // 页面加载 1秒后开始执行
+        }
+
+        // =================================================================
         // 1. CENTRALIZED CONFIGURATION
         // =================================================================
         const config = {
@@ -819,7 +982,7 @@
             img: "images/perfume2.webp",
             stock: 0,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A04",
@@ -837,7 +1000,7 @@
             img: "images/perfume5.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A06",
@@ -846,7 +1009,7 @@
             img: "images/perfume6.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A07",
@@ -855,7 +1018,7 @@
             img: "images/perfume7.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A08",
@@ -864,7 +1027,7 @@
             img: "images/perfume8.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A09",
@@ -872,8 +1035,7 @@
             brand: "Creed",
             img: "images/perfume9.webp",
             stock: 1,
-
-            price: 35,
+            price: 38,
           },
           {
             id: "A10",
@@ -888,7 +1050,7 @@
             name: "Maison Francis Kurkdjian Baccarat Rouge 540 Extrait de parfum",
             brand: "Maison Francis Kurkdjian",
             img: "images/perfume11.webp",
-            stock: 0,
+            stock: 1,
             price: 35,
           },
           {
@@ -897,7 +1059,8 @@
             brand: "Yves Saint Laurent",
             img: "images/perfume12.webp",
             stock: 1,
-            price: 35,
+
+            price: 38,
           },
           {
             id: "A13",
@@ -906,7 +1069,7 @@
             img: "images/perfume13.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A14",
@@ -915,7 +1078,7 @@
             img: "images/perfume14.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A15",
@@ -924,7 +1087,7 @@
             img: "images/perfume15.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A16",
@@ -933,7 +1096,7 @@
             img: "images/perfume16.webp",
             stock: 0,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A18",
@@ -942,7 +1105,7 @@
             img: "images/perfume18.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A19",
@@ -951,7 +1114,7 @@
             img: "images/perfume19.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A21",
@@ -960,7 +1123,7 @@
             img: "images/perfume21.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A22",
@@ -969,7 +1132,7 @@
             img: "images/perfume22.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A23",
@@ -978,7 +1141,7 @@
             img: "images/perfume23.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A24",
@@ -987,7 +1150,7 @@
             img: "images/perfume24.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A25",
@@ -996,7 +1159,7 @@
             img: "images/perfume25.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A26",
@@ -1005,7 +1168,7 @@
             img: "images/perfume26.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A27",
@@ -1014,7 +1177,7 @@
             img: "images/perfume27.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A28",
@@ -1023,7 +1186,7 @@
             img: "images/perfume28.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A29",
@@ -1032,7 +1195,7 @@
             img: "images/perfume29.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A31",
@@ -1041,7 +1204,7 @@
             img: "images/perfume31.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A32",
@@ -1050,7 +1213,7 @@
             img: "images/perfume32.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A33",
@@ -1068,7 +1231,7 @@
             img: "images/perfume34.webp",
             stock: 0,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A35",
@@ -1077,7 +1240,7 @@
             img: "images/perfume35.webp",
             stock: 0,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A36",
@@ -1113,7 +1276,7 @@
             img: "images/perfume40.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A41",
@@ -1122,7 +1285,7 @@
             img: "images/perfume41.webp",
             stock: 0,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A42",
@@ -1131,7 +1294,7 @@
             img: "images/perfume42.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A43",
@@ -1140,7 +1303,7 @@
             img: "images/perfume43.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A44",
@@ -1149,14 +1312,14 @@
             img: "images/perfume44.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A45",
             name: "Yves Saint Laurent MYSLF",
             brand: "Yves Saint Laurent",
             img: "images/perfume45.webp",
-            stock: 0,
+            stock: 1,
             price: 35,
           },
           {
@@ -1175,7 +1338,7 @@
             img: "images/perfume47.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A48",
@@ -1184,7 +1347,7 @@
             img: "images/perfume48.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A51",
@@ -1193,7 +1356,7 @@
             img: "images/perfume51.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A52",
@@ -1202,7 +1365,7 @@
             img: "images/perfume52.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A53",
@@ -1211,7 +1374,7 @@
             img: "images/perfume53.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A57",
@@ -1220,7 +1383,7 @@
             img: "images/perfume57.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A58",
@@ -1229,7 +1392,7 @@
             img: "images/perfume58.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A59",
@@ -1238,7 +1401,7 @@
             img: "images/perfume59.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A60",
@@ -1247,7 +1410,7 @@
             img: "images/perfume60.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A61",
@@ -1256,7 +1419,7 @@
             img: "images/perfume61.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A62",
@@ -1265,7 +1428,7 @@
             img: "images/perfume62.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A64",
@@ -1274,7 +1437,7 @@
             img: "images/perfume64.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A65",
@@ -1283,7 +1446,7 @@
             img: "images/perfume65.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A67",
@@ -1292,7 +1455,7 @@
             img: "images/perfume67.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A68",
@@ -1301,7 +1464,7 @@
             img: "images/perfume68.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A70",
@@ -1310,7 +1473,7 @@
             img: "images/perfume70.webp",
             stock: 0,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A71",
@@ -1328,7 +1491,7 @@
             img: "images/perfume72.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A73",
@@ -1337,7 +1500,7 @@
             img: "images/perfume73.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A74",
@@ -1346,7 +1509,7 @@
             img: "images/perfume74.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A75",
@@ -1355,7 +1518,7 @@
             img: "images/perfume75.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A76",
@@ -1364,7 +1527,7 @@
             img: "images/perfume76.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A77",
@@ -1373,7 +1536,7 @@
             img: "images/perfume77.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A78",
@@ -1382,7 +1545,7 @@
             img: "images/perfume78.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A79",
@@ -1391,7 +1554,7 @@
             img: "images/perfume79.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A80",
@@ -1400,7 +1563,7 @@
             img: "images/perfume80.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1410,7 +1573,7 @@
             img: "images/perfume81.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A82",
@@ -1419,7 +1582,7 @@
             img: "images/perfume82.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1429,7 +1592,7 @@
             img: "images/perfume83.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1439,7 +1602,7 @@
             img: "images/perfume84.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A85",
@@ -1448,7 +1611,7 @@
             img: "images/perfume85.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A86",
@@ -1466,7 +1629,7 @@
             img: "images/perfume87.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A88",
@@ -1474,7 +1637,7 @@
             brand: "Parfums de Marly",
             img: "images/perfume88.webp",
             stock: 0,
-            price: 35,
+            price: 38,
           },
           {
             id: "A89",
@@ -1483,7 +1646,7 @@
             img: "images/perfume89.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A91",
@@ -1492,7 +1655,7 @@
             img: "images/perfume91.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A95",
@@ -1501,7 +1664,7 @@
             img: "images/perfume95.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A98",
@@ -1510,7 +1673,7 @@
             img: "images/perfume98.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A99",
@@ -1527,7 +1690,7 @@
             img: "images/perfume100.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A101",
@@ -1536,7 +1699,7 @@
             img: "images/perfume101.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1546,7 +1709,7 @@
             img: "images/perfume102.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1556,7 +1719,7 @@
             img: "images/perfume103.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A104",
@@ -1574,7 +1737,7 @@
             img: "images/perfume105.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1584,7 +1747,7 @@
             img: "images/perfume106.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A107",
@@ -1593,7 +1756,7 @@
             img: "images/perfume107.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A108",
@@ -1602,7 +1765,7 @@
             img: "images/perfume108.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A109",
@@ -1611,7 +1774,7 @@
             img: "images/perfume109.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A110",
@@ -1620,7 +1783,7 @@
             img: "images/perfume110.webp",
             stock: 0,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A111",
@@ -1629,7 +1792,7 @@
             img: "images/perfume111.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A112",
@@ -1638,7 +1801,7 @@
             img: "images/perfume112.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A113",
@@ -1647,7 +1810,7 @@
             img: "images/perfume113.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A114",
@@ -1656,7 +1819,7 @@
             img: "images/perfume114.webp",
             stock: 0,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A115",
@@ -1665,7 +1828,7 @@
             img: "images/perfume115.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A116",
@@ -1674,7 +1837,7 @@
             img: "images/perfume116.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1684,7 +1847,7 @@
             img: "images/perfume117.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A118",
@@ -1693,7 +1856,7 @@
             img: "images/perfume118.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A119",
@@ -1702,7 +1865,7 @@
             img: "images/perfume119.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A120",
@@ -1721,7 +1884,7 @@
             img: "images/perfume121.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1731,7 +1894,7 @@
             img: "images/perfume122.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A123",
@@ -1740,7 +1903,7 @@
             img: "images/perfume123.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1750,7 +1913,7 @@
             img: "images/perfume124.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1760,7 +1923,7 @@
             img: "images/perfume125.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A126",
@@ -1785,7 +1948,7 @@
             img: "images/perfume136.webp",
             stock: 0,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1795,7 +1958,7 @@
             img: "images/perfume137.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
 
           {
@@ -1805,7 +1968,7 @@
             img: "images/perfume138.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A139",
@@ -1814,7 +1977,7 @@
             img: "images/perfume139.webp",
             stock: 1,
 
-            price: 35,
+            price: 38,
           },
           {
             id: "A140",
@@ -1823,7 +1986,7 @@
             img: "images/perfume140.webp",
 
             stock: 1,
-            price: 35,
+            price: 38,
           },
           {
             id: "A141",
