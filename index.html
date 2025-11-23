@@ -205,7 +205,7 @@
         margin: 0 auto;
       }
 
-      /* Scroll Wrapper (Mobile Default) */
+      /* Scroll Wrapper (Mobile Default: Horizontal Scroll) */
       .top-scroll-wrapper {
         display: flex;
         overflow-x: auto;
@@ -349,6 +349,14 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+      }
+
+      /* Capacity Text Style */
+      .product-size {
+        font-size: 0.85rem;
+        color: #888; /* Light Grey */
+        margin: 4px 0;
+        font-weight: normal;
       }
 
       /* Add to Cart Button (on card) */
@@ -527,19 +535,41 @@
       .modal.open {
         display: flex;
       }
+      /* --- Modal Styles (修复版) --- */
       .modal-content {
-        max-width: 90vw;
-        max-height: 90vh;
+        max-width: 600px; /* 限制最大宽度，防止电脑上太宽 */
+        width: 90vw;
+        max-height: 90vh; /* 最大高度 */
         border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
+
+        /* 关键修改 1: 允许垂直滚动，防止内容被切掉 */
+        overflow-y: auto;
+        /* 关键修改 2: 使用 Flex 布局，确保布局稳固 */
+        display: flex;
+        flex-direction: column;
+
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.25);
         background: #fff;
         text-align: center;
+        position: relative; /* 确保关闭按钮定位准确 */
       }
+
       .modal-content img {
-        max-width: 100%;
-        max-height: 80vh;
-        display: block;
+        width: 100%;
+        /* 关键修改 3: 降低图片最大高度，给按钮留空间 */
+        max-height: 60vh;
+        object-fit: contain; /* 保持图片比例完整显示 */
+        background-color: #f9f9f9;
+        flex-shrink: 0; /* 防止图片被压缩没了 */
+      }
+
+      /* 优化滚动条样式 (可选) */
+      .modal-content::-webkit-scrollbar {
+        width: 6px;
+      }
+      .modal-content::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 3px;
       }
       .modal-caption {
         padding: 12px 20px;
@@ -714,6 +744,8 @@
     </style>
   </head>
   <body>
+    <h2 class="TOP">Perfume List</h2>
+
     <div class="price-info">
       <div>
         <p style="font-size: 1.1rem; font-weight: 700">Perfuems: From $30</p>
@@ -722,7 +754,7 @@
         </p>
         <p style="font-size: 1.1rem; font-weight: 700">USA WAREHOUSE</p>
         <p style="font-size: 0.9rem; color: #555">
-          (Total price is shown on shopping cart)
+          (Exact price is shown on each product)
         </p>
       </div>
       <hr class="info-divider" />
@@ -757,53 +789,62 @@
       <button data-brand="All" class="active" aria-pressed="true">
         All Brands
       </button>
-      <button data-brand="Dior" aria-pressed="false">Dior</button>
+
+      <button data-brand="Giorgio Armani" aria-pressed="false">Armani</button>
+      <button data-brand="Azzaro" aria-pressed="false">Azzaro</button>
+      <button data-brand="Burberry" aria-pressed="false">Burberry</button>
+      <button data-brand="BVLGARI" aria-pressed="false">BVLGARI</button>
+      <button data-brand="Carolina Herrera" aria-pressed="false">
+        Carolina Herrera
+      </button>
       <button data-brand="Chanel" aria-pressed="false">Chanel</button>
-      <button data-brand="Yves Saint Laurent" aria-pressed="false">
-        Yves Saint Laurent
-      </button>
-      <button data-brand="Louis Vuitton" aria-pressed="false">
-        Louis Vuitton
-      </button>
-      <button data-brand="Tom Ford" aria-pressed="false">Tom Ford</button>
-      <button data-brand="Gucci" aria-pressed="false">Gucci</button>
-      <button data-brand="Valentino" aria-pressed="false">Valentino</button>
-      <button data-brand="Prada" aria-pressed="false">Prada</button>
-      <button data-brand="Versace" aria-pressed="false">Versace</button>
       <button data-brand="Creed" aria-pressed="false">Creed</button>
-      <button data-brand="Xerjoff" aria-pressed="false">Xerjoff</button>
-      <button data-brand="Kayali" aria-pressed="false">Kayali</button>
+      <button data-brand="Dior" aria-pressed="false">Dior</button>
+      <button data-brand="Givenchy" aria-pressed="false">Givenchy</button>
+      <button data-brand="Gucci" aria-pressed="false">Gucci</button>
       <button data-brand="Initio" aria-pressed="false">Initio</button>
       <button data-brand="Jean Paul Gaultier" aria-pressed="false">
         Jean Paul Gaultier
       </button>
+      <button data-brand="Kayali" aria-pressed="false">Kayali</button>
+      <button data-brand="Kilian" aria-pressed="false">Kilian</button>
+      <button data-brand="Lancôme" aria-pressed="false">Lancôme</button>
+      <button data-brand="Lattafa" aria-pressed="false">Lattafa</button>
+      <button data-brand="Louis Vuitton" aria-pressed="false">
+        Louis Vuitton
+      </button>
       <button data-brand="Maison Francis Kurkdjian" aria-pressed="false">
         Maison Francis Kurkdjian
+      </button>
+      <button data-brand="Paco Rabanne" aria-pressed="false">
+        Paco Rabanne
       </button>
       <button data-brand="Parfums de Marly" aria-pressed="false">
         Parfums de Marly
       </button>
-      <button data-brand="Giorgio Armani" aria-pressed="false">Armani</button>
-      <button data-brand="Carolina Herrera" aria-pressed="false">
-        Carolina Herrera
+      <button data-brand="Prada" aria-pressed="false">Prada</button>
+      <button data-brand="Ralph Lauren" aria-pressed="false">
+        Ralph Lauren
       </button>
-      <button data-brand="Lattafa" aria-pressed="false">Lattafa</button>
-      <button data-brand="Azzaro" aria-pressed="false">Azzaro</button>
-      <button data-brand="Paco Rabanne" aria-pressed="false">
-        Paco Rabanne
+      <button data-brand="Tom Ford" aria-pressed="false">Tom Ford</button>
+      <button data-brand="Valentino" aria-pressed="false">Valentino</button>
+      <button data-brand="Versace" aria-pressed="false">Versace</button>
+      <button data-brand="Xerjoff" aria-pressed="false">Xerjoff</button>
+      <button data-brand="Yves Saint Laurent" aria-pressed="false">
+        Yves Saint Laurent
       </button>
+
       <button data-brand="Other" aria-pressed="false">Other Brands</button>
     </div>
-    <div
-      id="top-picks-container"
-      style="display: none; max-width: 1200px; margin: 0 auto"
-    >
+
+    <div id="top-picks-container" style="display: none">
       <h3 style="padding: 0 15px; margin-bottom: 10px; font-size: 1.1rem">
         🔥 Best Sellers
       </h3>
       <div class="top-scroll-wrapper" id="top-gallery"></div>
       <hr style="margin: 20px 15px; border: 0; border-top: 1px solid #eee" />
     </div>
+
     <div class="gallery" id="gallery">
       <div class="gallery-loader"></div>
     </div>
@@ -912,7 +953,7 @@
       <div
         class="modal-content"
         style="
-          max-width: 600px; /* 您可以调整图片弹窗的最大宽度 */
+          max-width: 600px;
           text-align: center;
           padding: 0;
           overflow: hidden;
@@ -967,46 +1008,39 @@
 
     <script>
       // =================================================================
-      // 全局变量定义 (Global Variables)
+      // GLOBAL VARIABLES & DOM ELEMENTS
       // =================================================================
       let currentBrandFilter = "all";
       let currentSupplierFilter = "all";
       let searchTerm = "";
       let cartItems = [];
 
-      // DOM 元素变量 (将在 DOMContentLoaded 中赋值)
-      let perfumeList, searchInput, searchClearBtn, cartButton, cartCount; // 改名: clearSearchButton -> searchClearBtn
-      let brandNavbar, allBrandButtons, showAllButton, supplierButtons, gallery; // 改名: brandButtons -> allBrandButtons
+      // DOM elements will be assigned in DOMContentLoaded
+      let perfumeList, searchInput, searchClearBtn, cartButton, cartCount;
+      let brandNavbar, allBrandButtons, showAllButton, supplierButtons, gallery;
       let sortBy;
 
       // =================================================================
-      // 1. 定义全局渲染入口 (供 db.js 调用)
-      // =================================================================
-      // =================================================================
-      // 1. 定义全局渲染入口 (供 db.js 调用) - 已整合 Top 6 爆款区逻辑
+      // 1. GLOBAL RENDER FUNCTION (Called by db.js)
       // =================================================================
       window.renderPerfumes = function () {
         const db = window.perfumeDB || [];
-        // 如果 DOM 还没准备好，或者 db.js 数据还没准备好，暂时不渲染
         if (!gallery) return;
 
-        // === 1. 渲染 Top Picks (新增部分: 爆款区) ===
+        // --- Render Top Picks (Best Sellers) ---
         const topContainer = document.getElementById("top-picks-container");
         const topGallery = document.getElementById("top-gallery");
-
-        // 筛选出表格里 top 列为 1 的产品 (兼容字符串 "1" 和数字 1)
         const topItems = db.filter((p) => p.top == 1);
 
         if (topContainer && topGallery) {
           if (topItems.length > 0) {
-            topContainer.style.display = "block";
-            topGallery.innerHTML = ""; // 清空旧内容
+            topGallery.innerHTML = "";
 
             topItems.forEach((p) => {
               const el = document.createElement("div");
               el.className = "top-card";
-              // 点击事件：模拟点击主列表里的商品来触发弹窗
               el.onclick = (e) => {
+                // Simulate click on main item to open modal
                 const mainItem = document.querySelector(
                   `.item[data-name="${p.id}"]`
                 );
@@ -1023,13 +1057,10 @@
                  `;
               topGallery.appendChild(el);
             });
-          } else {
-            topContainer.style.display = "none";
           }
         }
 
-        // === 2. 渲染主列表 (原有逻辑) ===
-        // 调用原本的过滤和搜索逻辑，它会负责最终的主列表渲染
+        // --- Render Main List ---
         if (typeof window.applyLastState === "function") {
           window.applyLastState();
         } else if (typeof window.filterAndSearch === "function") {
@@ -1038,28 +1069,25 @@
       };
 
       document.addEventListener("DOMContentLoaded", () => {
-        // --- 初始化 DOM 元素 ---
+        // --- Init DOM Elements ---
         perfumeList = document.getElementById("gallery");
         gallery = document.getElementById("gallery");
         searchInput = document.getElementById("search-input");
-        searchClearBtn = document.getElementById("search-clear-btn"); // 修正变量名
+        searchClearBtn = document.getElementById("search-clear-btn");
         cartButton = document.getElementById("cart-button");
         cartCount = document.getElementById("cart-count");
         brandNavbar = document.getElementById("brand-navbar");
         sortBy = document.getElementById("sort-by");
 
-        // 按钮组
         allBrandButtons = document.querySelectorAll(
           ".navbar button[data-brand]"
-        ); // 修正变量名
+        );
         showAllButton = document.querySelector(
           ".navbar button[data-brand='All']"
         );
-        supplierButtons = document.querySelectorAll(".supplier-btn"); // 确保如果有供应商按钮也能获取到
+        supplierButtons = document.querySelectorAll(".supplier-btn");
 
-        // =================================================================
-        // 方案 1: 品牌栏自动滑动提示
-        // =================================================================
+        // --- Auto Scroll Hint & Drag Scroll ---
         if (brandNavbar) {
           setTimeout(() => {
             brandNavbar.scrollTo({ left: 60, behavior: "smooth" });
@@ -1068,7 +1096,7 @@
             }, 800);
           }, 1000);
 
-          // ✨ PC 端鼠标拖拽滚动支持
+          // PC Mouse Drag Support
           let isDown = false;
           let startX;
           let scrollLeft;
@@ -1078,7 +1106,7 @@
             brandNavbar.classList.add("active");
             startX = e.pageX - brandNavbar.offsetLeft;
             scrollLeft = brandNavbar.scrollLeft;
-            e.preventDefault(); // 防止拖动时选中文字
+            e.preventDefault();
           });
           brandNavbar.addEventListener("mouseleave", () => {
             isDown = false;
@@ -1111,7 +1139,7 @@
 
         const { whatsappNumber, brandAliases } = config;
 
-        // --- Modal 元素 ---
+        // --- Modal Elements ---
         const modal = document.getElementById("modal");
         const modalImg = document.getElementById("modal-img");
         const modalCaption = document.getElementById("modal-caption");
@@ -1135,15 +1163,14 @@
         );
 
         // =================================================================
-        // 核心逻辑函数
+        // CORE LOGIC
         // =================================================================
 
-        // 渲染画廊 (接收过滤后的列表)
+        // Render Gallery
         function renderGallery(perfumeListToRender) {
           gallery.innerHTML = "";
-
-          // 如果数据为空，显示 Loading 或 空状态
           const db = window.perfumeDB || [];
+
           if (db.length === 0) {
             gallery.innerHTML = '<div class="gallery-loader"></div>';
             return;
@@ -1178,13 +1205,26 @@
 
             item.innerHTML = `
                         ${tierBadge}
-                        <img src="${perfume.img}" alt="${perfume.id} - ${perfume.name}" loading="lazy" decoding="async"/>
+                        <img src="${perfume.img}" alt="${perfume.id} - ${
+              perfume.name
+            }" loading="lazy" decoding="async"/>
                         <div class="caption">
-                          ${perfume.id} - ${displayName} <strong style="display: block; color: #333; font-size: 1.1rem; margin-top: 5px;">
+                          ${perfume.id} - ${displayName}
+                          
+                          <div class="product-size">
+                            ${perfume.ml ? perfume.ml + "ml" : ""} 
+                            ${
+                              perfume.floz ? "/ " + perfume.floz + " FL.OZ" : ""
+                            }
+                          </div>
+
+                          <strong style="display: block; color: #333; font-size: 1.1rem; margin-top: 5px;">
                             $${perfume.price}
                           </strong>
                         </div>
-                        <button class="add-to-cart" title="Add to Cart" aria-label="Add ${perfume.id} to cart">
+                        <button class="add-to-cart" title="Add to Cart" aria-label="Add ${
+                          perfume.id
+                        } to cart">
                           🛒 <span class="item-cart-count"></span>
                         </button>
                     `;
@@ -1195,12 +1235,11 @@
           renderItemCounts();
         }
 
-        // 过滤和搜索 (核心入口)
+        // Filter & Search Function
         window.filterAndSearch = function () {
-          // 1. 获取数据源 (从 window.perfumeDB 获取)
           const db = window.perfumeDB || [];
           if (db.length === 0) {
-            renderGallery([]); // 触发 Loading 状态
+            renderGallery([]);
             return;
           }
 
@@ -1210,12 +1249,25 @@
             : "All";
           const selectedSort = sortBy ? sortBy.value : "default";
 
+          // --- Control Top Picks Visibility ---
+          const topContainer = document.getElementById("top-picks-container");
+          if (topContainer) {
+            const isSearching = searchInput.value.trim().length > 0;
+            // Show only if "All Brands" and NOT searching
+            const hasTopItems = db.some((p) => p.top == 1);
+
+            if (selectedBrand === "All" && !isSearching && hasTopItems) {
+              topContainer.style.display = "block";
+            } else {
+              topContainer.style.display = "none";
+            }
+          }
+
           let term = searchInput.value.toLowerCase().trim();
           if (brandAliases[term]) {
             term = brandAliases[term];
           }
 
-          // 2. 过滤
           const dedicatedBrands = [
             "Dior",
             "Chanel",
@@ -1241,7 +1293,6 @@
           ];
 
           let filteredList = db.filter((p) => {
-            // Brand Filter
             let brandMatch = true;
             if (selectedBrand !== "All") {
               if (selectedBrand === "Other") {
@@ -1251,7 +1302,6 @@
               }
             }
 
-            // Search Filter
             let searchMatch = true;
             if (term) {
               const nameStr = p.name ? String(p.name).toLowerCase() : "";
@@ -1266,7 +1316,7 @@
             return brandMatch && searchMatch;
           });
 
-          // 3. 排序
+          // Sorting Logic
           filteredList = filteredList.slice();
           if (selectedSort === "price-asc") {
             filteredList.sort((a, b) => Number(a.price) - Number(b.price));
@@ -1274,6 +1324,17 @@
             filteredList.sort((a, b) => Number(b.price) - Number(a.price));
           } else if (selectedSort === "newest") {
             filteredList.reverse();
+          } else {
+            // Default Sort: ID only (A01, A02...)
+            // Keeps list stable regardless of brand selection
+            filteredList.sort((a, b) => {
+              const idA = a.id || "";
+              const idB = b.id || "";
+              return idA.localeCompare(idB, undefined, {
+                numeric: true,
+                sensitivity: "base",
+              });
+            });
           }
 
           renderGallery(filteredList);
@@ -1283,7 +1344,7 @@
           localStorage.setItem("lastSort", selectedSort);
         };
 
-        // 恢复上次状态
+        // Restore State
         window.applyLastState = function () {
           const lastBrand = localStorage.getItem("lastFilterBrand") || "All";
           const lastSearch = localStorage.getItem("lastSearchTerm") || "";
@@ -1293,17 +1354,13 @@
 
           if (lastSearch) {
             searchInput.value = lastSearch;
-            // 修复变量名: clearSearchButton -> searchClearBtn
             if (searchClearBtn) searchClearBtn.style.display = "flex";
           } else {
             searchInput.value = "";
-            // 修复变量名
             if (searchClearBtn) searchClearBtn.style.display = "none";
 
-            // 恢复品牌按钮状态
             let brandApplied = false;
             if (allBrandButtons) {
-              // 修复变量名
               allBrandButtons.forEach((btn) => {
                 const isMatch = btn.dataset.brand === lastBrand;
                 btn.classList.toggle("active", isMatch);
@@ -1320,7 +1377,7 @@
           window.filterAndSearch();
         };
 
-        // --- 购物车逻辑 ---
+        // --- Cart Functions ---
         function loadCartFromLocalStorage() {
           const storedCart = localStorage.getItem("perfumeCart");
           cartItems = storedCart ? JSON.parse(storedCart) : [];
@@ -1339,7 +1396,6 @@
         }
 
         function renderItemCounts() {
-          // 只有当 gallery 有内容时才运行
           const currentItems = gallery.querySelectorAll(".item");
           currentItems.forEach((item) => {
             const itemName = item.dataset.name;
@@ -1357,12 +1413,12 @@
         }
 
         function addItemToCart(productId) {
-          // 从 window.perfumeDB 查找数据
           const db = window.perfumeDB || [];
           const perfumeData = db.find((p) => p.id === productId);
           if (!perfumeData) return;
 
-          const { id, name, img, price, tier } = perfumeData;
+          const { id, name, img, price, tier, sku, supplier, ml, floz } =
+            perfumeData;
           const existingItem = cartItems.find(
             (cartItem) => cartItem.name === id
           );
@@ -1377,9 +1433,10 @@
               quantity: 1,
               price: Number(price),
               tier: tier,
-              // 保存 sku 和 supplier 以便购物车页面使用
-              sku: perfumeData.sku,
-              supplier: perfumeData.supplier,
+              sku: sku,
+              supplier: supplier,
+              ml: ml,
+              floz: floz,
             });
           }
           saveCartToLocalStorage();
@@ -1388,7 +1445,7 @@
           pulseCartButton();
         }
 
-        // --- 辅助功能 ---
+        // --- Helper Functions ---
         function handleNoResults() {
           let messageEl = gallery.querySelector(".no-results-message");
           if (!messageEl) {
@@ -1417,15 +1474,12 @@
           setTimeout(() => confirmation.remove(), 1500);
         }
 
-        // --- 事件监听绑定 ---
-
-        // 1. 品牌点击
+        // --- Event Listeners ---
         if (brandNavbar) {
           brandNavbar.addEventListener("click", (e) => {
             const button = e.target.closest("button[data-brand]");
             if (!button) return;
 
-            // 修复变量名: brandButtons -> allBrandButtons
             if (allBrandButtons) {
               allBrandButtons.forEach((btn) => {
                 btn.classList.remove("active");
@@ -1435,7 +1489,6 @@
             button.classList.add("active");
             button.setAttribute("aria-pressed", "true");
 
-            // --- 自动滚动 ---
             const scrollLeft = button.offsetLeft - 15;
             brandNavbar.scrollTo({
               left: scrollLeft,
@@ -1443,16 +1496,13 @@
             });
 
             searchInput.value = "";
-            // 修复变量名
             if (searchClearBtn) searchClearBtn.style.display = "none";
             window.filterAndSearch();
           });
         }
 
-        // 2. 搜索输入
         if (searchInput) {
           searchInput.addEventListener("input", () => {
-            // 修复变量名
             if (allBrandButtons) {
               allBrandButtons.forEach((btn) => {
                 const isAll = btn.dataset.brand === "All";
@@ -1460,7 +1510,6 @@
                 btn.setAttribute("aria-pressed", isAll);
               });
             }
-            // 修复变量名
             if (searchClearBtn)
               searchClearBtn.style.display = searchInput.value
                 ? "flex"
@@ -1469,7 +1518,6 @@
           });
         }
 
-        // 修复变量名
         if (searchClearBtn) {
           searchClearBtn.addEventListener("click", () => {
             searchInput.value = "";
@@ -1477,19 +1525,16 @@
           });
         }
 
-        // 3. 排序改变
         if (sortBy) {
           sortBy.addEventListener("change", window.filterAndSearch);
         }
 
-        // 4. 购物车点击
         if (cartButton) {
           cartButton.addEventListener("click", () => {
             window.location.href = "cart.html";
           });
         }
 
-        // 5. 画廊点击 (加入购物车 / 打开弹窗)
         if (gallery) {
           gallery.addEventListener("click", function (e) {
             const addToCartBtn = e.target.closest(".add-to-cart");
@@ -1513,7 +1558,6 @@
           });
         }
 
-        // 6. 弹窗内操作
         function updateModalControls(productId) {
           const itemInCart = cartItems.find(
             (cartItem) => cartItem.name === productId
@@ -1571,7 +1615,6 @@
           });
         }
 
-        // Esc关闭弹窗
         document.addEventListener("keydown", (e) => {
           if (e.key === "Escape") {
             if (modal) modal.classList.remove("open");
@@ -1580,7 +1623,6 @@
           }
         });
 
-        // 其他弹窗逻辑
         if (policyBtn && policyModal && policyModalClose) {
           policyBtn.addEventListener("click", () =>
             policyModal.classList.add("open")
@@ -1605,7 +1647,6 @@
           });
         }
 
-        // 回到顶部
         window.addEventListener("scroll", () => {
           if (window.pageYOffset > 300) {
             if (backToTopButton) backToTopButton.style.display = "block";
@@ -1619,12 +1660,10 @@
           });
         }
 
-        // --- 初始化 ---
+        // --- Initialize ---
         loadCartFromLocalStorage();
         updateCartCount();
 
-        // 先尝试恢复状态 (这会触发一次渲染, 如果 db.js 还没好, 会显示 Loading)
-        // 这里的 renderPerfumes 会检查 gallery 是否存在
         window.applyLastState();
       });
     </script>
