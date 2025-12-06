@@ -231,7 +231,65 @@
         font-weight: bold;
       }
 
-      /* ================= 4. 骨架屏与图片加载动画 ================= */
+      /* ================= 4. 极简版购物指引 (Compact Guide) ================= */
+      .compact-guide {
+        background: #fff;
+        padding: 15px 10px;
+        border-bottom: 8px solid #f8f8f8; /* 浅灰色分隔条 */
+        margin-bottom: 10px;
+      }
+
+      .compact-steps {
+        display: flex;
+        justify-content: space-between; /* 两端对齐 */
+        align-items: flex-start;
+        max-width: 450px; /* 限制最大宽度 */
+        margin: 0 auto;
+      }
+
+      .compact-item {
+        flex: 1;
+        text-align: center;
+        position: relative;
+        padding: 0 2px;
+      }
+
+      /* 步骤之间的灰色小箭头 › */
+      .compact-item:not(:last-child)::after {
+        content: "›";
+        position: absolute;
+        right: -6px;
+        top: 8px;
+        font-size: 1.6rem;
+        color: #e0e0e0;
+        line-height: 0;
+        font-weight: 300;
+      }
+
+      .compact-icon {
+        font-size: 1.5rem;
+        margin-bottom: 6px;
+        display: block;
+        line-height: 1;
+      }
+
+      .compact-text {
+        font-size: 0.75rem; /* 12px */
+        line-height: 1.2;
+        color: #333;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+
+      .compact-sub {
+        font-size: 0.65rem; /* 10px - 作为补充说明 */
+        color: #999;
+        display: block;
+        font-weight: 500;
+        transform: scale(0.95);
+      }
+
+      /* ================= 5. 骨架屏与图片加载动画 ================= */
       @keyframes skeleton-loading {
         0% {
           background-position: 200% 0;
@@ -261,9 +319,8 @@
         opacity: 1;
       }
 
-      /* ================= 5. 首页 (Home View) ================= */
+      /* ================= 6. 首页 (Home View) ================= */
       #home-view {
-        padding-top: 10px;
         padding-bottom: 30px;
         display: block;
       }
@@ -345,7 +402,7 @@
         opacity: 1;
         pointer-events: auto;
       }
-      .scroll-arrow-btn:active {
+      .scroll-arrow-btn.active {
         transform: translateY(-50%) scale(0.9);
         background: #eee;
       }
@@ -475,7 +532,7 @@
         transition: transform 0.2s;
       }
 
-      /* ================= 6. 网格视图 (Grid View) ================= */
+      /* ================= 7. 网格视图 (Grid View) ================= */
       #grid-view {
         display: none;
         max-width: 1200px;
@@ -572,7 +629,7 @@
         color: #aaa;
       }
 
-      /* ================= 7. Trust Section & Modal ================= */
+      /* ================= 8. Trust Section & Modal ================= */
       .trust-section {
         background: #fff;
         margin-top: 20px;
@@ -631,7 +688,6 @@
         overflow: hidden;
         position: relative;
         text-align: center;
-        /* [修改点] 底部padding极限压缩 */
         padding-bottom: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       }
@@ -650,13 +706,11 @@
       }
       .modal-img {
         width: 100%;
-        /* [修改点] 恢复图片高度为 300px */
         height: 300px;
         object-fit: cover;
         background: #f8f8f8;
       }
       .modal-info {
-        /* [修改点] 内边距压缩 */
         padding: 8px 15px;
       }
       .modal-btn {
@@ -668,7 +722,6 @@
         border-radius: 8px;
         cursor: pointer;
         font-weight: bold;
-        /* [修改点] 间距压缩 */
         margin-top: 8px;
         display: block;
       }
@@ -680,7 +733,6 @@
         background: #fff;
         border: 2px solid #000;
         border-radius: 8px;
-        /* [修改点] 间距压缩 */
         margin-top: 8px;
         height: 48px;
         overflow: hidden;
@@ -774,9 +826,7 @@
         }
       }
 
-      /* ================= 新增样式 (Gender & Notes) ================= */
-
-      /* 弹窗中的香调(Notes)区域 - [修改点] 极度压缩间距 */
+      /* ================= 9. Gender Tags & Notes ================= */
       .modal-notes-box {
         background-color: #f7f7f7;
         border-radius: 8px;
@@ -802,7 +852,6 @@
         font-style: italic;
       }
 
-      /* ================= [修改点] 区分性别的颜色标签 ================= */
       .gender-tag {
         display: inline-block;
         font-size: 0.7rem;
@@ -813,22 +862,16 @@
         font-weight: 600;
         letter-spacing: 0.5px;
       }
-
-      /* Women: 柔和粉 */
       .gender-tag.women {
         color: #c2185b;
         background: #fce4ec;
         border: 1px solid #f8bbd0;
       }
-
-      /* Men: 清爽蓝 */
       .gender-tag.men {
         color: #1565c0;
         background: #e3f2fd;
         border: 1px solid #bbdefb;
       }
-
-      /* Unisex: 高级灰/中性色 */
       .gender-tag.unisex {
         color: #455a64;
         background: #eceff1;
@@ -910,6 +953,27 @@
     </div>
 
     <div id="home-view">
+      <div class="compact-guide">
+        <div class="compact-steps">
+          <div class="compact-item">
+            <span class="compact-icon">🛒</span>
+            <div class="compact-text">1. Add to Cart</div>
+            <span class="compact-sub">Auto Discount</span>
+          </div>
+
+          <div class="compact-item">
+            <span class="compact-icon" style="color: #25d366">💬</span>
+            <div class="compact-text">2. Send List</div>
+            <span class="compact-sub">To WhatsApp</span>
+          </div>
+
+          <div class="compact-item">
+            <span class="compact-icon" style="color: #b28900">🧾</span>
+            <div class="compact-text">3. Make Order</div>
+            <span class="compact-sub">Payment Link</span>
+          </div>
+        </div>
+      </div>
       <div id="home-content">
         <div class="loading-container">
           <div class="spinner"></div>
