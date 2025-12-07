@@ -289,6 +289,67 @@
         transform: scale(0.95);
       }
 
+      /* ================= 批发横幅 (Wholesale Banner) - 固定版 ================= */
+      .ws-banner {
+        background: #222;
+        color: #fff;
+        padding: 10px 5px;
+        text-align: center;
+        transition: background 0.3s;
+
+        /* 核心修改：固定在顶部 */
+        position: sticky;
+        top: var(--header-height); /* 紧贴 Header 下方 */
+        z-index: 990; /* 确保在产品列表之上，但在弹窗之下 */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* 加阴影，增加层次感 */
+      }
+
+      /* 当有折扣处于激活状态时，背景变金色 */
+      .ws-banner.active-tier {
+        background: linear-gradient(135deg, #111 0%, #2a2a2a 100%);
+        border-bottom: 3px solid #ffd700;
+      }
+
+      /* 进度条容器 */
+      .ws-progress-box {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 6px 10px;
+        margin: 0 auto;
+        max-width: 95%;
+        display: inline-block;
+      }
+      .ws-progress-text {
+        font-size: 0.85rem;
+        margin-bottom: 2px;
+        color: #fff;
+      }
+      .ws-highlight {
+        color: #ffd700;
+        font-weight: bold;
+        font-size: 1rem;
+      }
+
+      /* 默认显示的 Pill */
+      .ws-pills {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .ws-pill {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid #444;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+      }
+      .ws-pill span {
+        color: #ffd700;
+        font-weight: bold;
+        margin-left: 3px;
+      }
+
       /* ================= 5. 骨架屏与图片加载动画 ================= */
       @keyframes skeleton-loading {
         0% {
@@ -331,7 +392,7 @@
         padding: 20px 0;
         border-top: 1px solid #eee;
         border-bottom: 1px solid #eee;
-        scroll-margin-top: 70px;
+        scroll-margin-top: 130px; /* 调整：防止被固定Banner遮挡 */
         position: relative;
       }
 
@@ -953,6 +1014,14 @@
     </div>
 
     <div id="home-view">
+      <div id="wholesale-banner" class="ws-banner">
+        <div id="ws-content" class="ws-pills">
+          <div class="ws-pill">5+ <span>-8%</span></div>
+          <div class="ws-pill">10+ <span>-14%</span></div>
+          <div class="ws-pill">20+ <span>-24%</span></div>
+          <div class="ws-pill">100+ <span>-35%</span></div>
+        </div>
+      </div>
       <div class="compact-guide">
         <div class="compact-steps">
           <div class="compact-item">
@@ -1134,6 +1203,20 @@
         "Versace",
       ];
 
+      // === 全局折扣规则 (Discount Tiers) ===
+      const discountTiers = [
+        { min: 1, max: 1, percent: 0 },
+        { min: 2, max: 2, percent: 0.03 },
+        { min: 3, max: 4, percent: 0.05 },
+        { min: 5, max: 9, percent: 0.08 },
+        { min: 10, max: 19, percent: 0.14 },
+        { min: 20, max: 29, percent: 0.24 },
+        { min: 30, max: 49, percent: 0.26 },
+        { min: 50, max: 79, percent: 0.29 },
+        { min: 80, max: 100, percent: 0.32 },
+        { min: 101, max: Infinity, percent: 0.35 },
+      ];
+
       // ================= 状态变量 =================
       let cartItems = [];
       let currentPage = 1;
@@ -1157,6 +1240,76 @@
           }
         }, 50);
       });
+
+      // ================= 核心修复代码：监听 pageshow =================
+      // 这可以确保当用户点击“后退”回到此页面时，购物车和横幅数据会立即刷新
+      window.addEventListener("pageshow", function (event) {
+        loadCart(); // 重新读取 localStorage 并更新 UI（包括横幅）
+      });
+
+      // --- Helper: 获取购物车总数量 ---
+      function getCartTotalQty() {
+        return cartItems.reduce((s, i) => s + i.quantity, 0);
+      }
+
+      // --- Helper: 核心！更新首页批发横幅 ---
+      function updateWholesaleBanner() {
+        const qty = getCartTotalQty();
+        const banner = document.getElementById("wholesale-banner");
+        const content = document.getElementById("ws-content");
+
+        if (!banner || !content) return;
+
+        // 1. 如果购物车为空，显示默认吸引人的档位
+        if (qty === 0) {
+          banner.className = "ws-banner"; // 移除 active 类
+          content.innerHTML = `
+              <div class="ws-pill">5+ <span>-8%</span></div>
+              <div class="ws-pill">10+ <span>-14%</span></div>
+              <div class="ws-pill">20+ <span>-24%</span></div>
+              <div class="ws-pill">100+ <span>-35%</span></div>
+            `;
+          return;
+        }
+
+        // 2. 查找当前所处的档位
+        let currentTier = discountTiers.find(
+          (t) => qty >= t.min && qty <= t.max
+        );
+        if (!currentTier) currentTier = discountTiers[0]; // 兜底
+
+        // 3. 查找下一级目标
+        let nextTierIndex = discountTiers.indexOf(currentTier) + 1;
+        let nextTier = null;
+        if (nextTierIndex < discountTiers.length) {
+          nextTier = discountTiers[nextTierIndex];
+        }
+
+        // 4. 构建动态 HTML
+        let html = `<div class="ws-progress-box">`;
+
+        // 显示当前状态
+        let currentOff = Math.round(currentTier.percent * 100);
+        html += `<div class="ws-progress-text">Cart: <strong>${qty}</strong> items • Current: <span class="ws-highlight">-${currentOff}% OFF</span></div>`;
+
+        // 显示冲刺目标
+        if (nextTier) {
+          let needMore = nextTier.min - qty;
+          let nextOff = Math.round(nextTier.percent * 100);
+          html += `<div style="font-size:0.75rem; color:#ccc;">
+                🔥 Add <strong>${needMore}</strong> more to get <span style="color:#fff;font-weight:bold">-${nextOff}% OFF</span>!
+            </div>`;
+        } else {
+          // 已经是最高等级
+          html += `<div style="font-size:0.75rem; color:#ffd700;">👑 Maximum Discount Unlocked!</div>`;
+        }
+
+        html += `</div>`;
+
+        // 更新内容并激活样式
+        content.innerHTML = html;
+        banner.classList.add("active-tier");
+      }
 
       function formatSize(item) {
         if (!item.ml) return "";
@@ -1580,8 +1733,11 @@
             </div>
             ${notesHtml}
         `;
+
+        // 恢复简单的价格显示，移除之前的表格逻辑
         document.getElementById("modal-price").textContent =
           "$" + product.price;
+
         updateModalButtonState(product.id);
         document.getElementById("modal").classList.add("open");
       };
@@ -1684,6 +1840,10 @@
         }
         saveCart();
         showToast("Added to Cart! 🛒");
+
+        // 关键：加购后立即更新折扣横幅
+        updateWholesaleBanner();
+
         if (currentModalProductId === id) updateModalButtonState(id);
       };
 
@@ -1710,6 +1870,10 @@
           if (existing.quantity <= 0)
             cartItems = cartItems.filter((c) => c.name !== id);
           saveCart();
+
+          // 关键：修改数量后立即更新折扣横幅
+          updateWholesaleBanner();
+
           updateModalButtonState(id);
         }
       };
@@ -1723,6 +1887,9 @@
       function loadCart() {
         cartItems = JSON.parse(localStorage.getItem("perfumeCart") || "[]");
         updateCartCount();
+
+        // 页面加载时初始化横幅状态
+        updateWholesaleBanner();
       }
       function saveCart() {
         localStorage.setItem("perfumeCart", JSON.stringify(cartItems));
