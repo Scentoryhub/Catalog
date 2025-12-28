@@ -11,9 +11,12 @@
     <link rel="apple-touch-icon" href="icon/180.png" />
 
     <style>
-      /* ================= 1. 全局配置 ================= */
+      /* ================= 1. 全局配置 & 布局变量 ================= */
       :root {
         --header-height: 60px;
+        --trust-bar-height: 30px; /* 顶部条高度 */
+        --total-top-spacing: 90px; /* 60 + 30 = 90px */
+
         --sidebar-width: 300px;
         --accent-color: #b28900;
         --bg-color: #f8f8f8;
@@ -33,7 +36,7 @@
       body {
         margin: 0;
         padding: 0;
-        padding-top: var(--header-height);
+        padding-top: var(--total-top-spacing);
         padding-bottom: 60px;
         font-family: var(--font-main);
         background: var(--bg-color);
@@ -55,10 +58,61 @@
         padding: 0;
       }
 
+      /* ================= 【新】滑动式顶部信任条 (Slide Animation) ================= */
+      #trust-badge-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: var(--trust-bar-height);
+        background-color: #000000;
+        color: #ffffff;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        z-index: 1001;
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
+        letter-spacing: 0.5px;
+
+        /* 关键：隐藏溢出内容，只显示一行 */
+        overflow: hidden;
+      }
+
+      /* 滑动容器：包含两个子元素，垂直排列 */
+      #trust-slider {
+        width: 100%;
+        height: 100%; /* 这里的 100% 其实是两倍高度，因为里面有两个30px的元素 */
+        display: flex;
+        flex-direction: column; /* 垂直排列 */
+        transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* 顺滑的贝塞尔曲线 */
+      }
+
+      /* 单个滑块样式 */
+      .trust-slide-item {
+        width: 100%;
+        height: var(--trust-bar-height); /* 固定 30px */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0; /* 防止被压缩 */
+      }
+
+      /* 激活状态：向上移动 30px */
+      .slide-up-active {
+        transform: translateY(-30px);
+      }
+
+      @media (max-width: 600px) {
+        #trust-badge-bar {
+          font-size: 12px;
+        }
+      }
+
       /* ================= 2. 头部 (Header) ================= */
       .site-header {
         position: fixed;
-        top: 0;
+        top: var(--trust-bar-height);
         left: 0;
         width: 100%;
         height: var(--header-height);
@@ -149,7 +203,7 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.6);
-        z-index: 1001;
+        z-index: 2000;
         opacity: 0;
         visibility: hidden;
         transition: all 0.3s;
@@ -167,7 +221,7 @@
         width: 85%;
         max-width: var(--sidebar-width);
         background: #fff;
-        z-index: 1002;
+        z-index: 2001;
         transform: translateX(-100%);
         transition: transform 0.3s ease-in-out;
         display: flex;
@@ -231,19 +285,19 @@
         font-weight: bold;
       }
 
-      /* ================= 4. 极简版购物指引 (Compact Guide) ================= */
+      /* ================= 4. 极简版购物指引 ================= */
       .compact-guide {
         background: #fff;
         padding: 15px 10px;
-        border-bottom: 8px solid #f8f8f8; /* 浅灰色分隔条 */
+        border-bottom: 8px solid #f8f8f8;
         margin-bottom: 10px;
       }
 
       .compact-steps {
         display: flex;
-        justify-content: space-between; /* 两端对齐 */
+        justify-content: space-between;
         align-items: flex-start;
-        max-width: 450px; /* 限制最大宽度 */
+        max-width: 450px;
         margin: 0 auto;
       }
 
@@ -254,7 +308,6 @@
         padding: 0 2px;
       }
 
-      /* 步骤之间的灰色小箭头 › */
       .compact-item:not(:last-child)::after {
         content: "›";
         position: absolute;
@@ -274,7 +327,7 @@
       }
 
       .compact-text {
-        font-size: 0.75rem; /* 12px */
+        font-size: 0.75rem;
         line-height: 1.2;
         color: #333;
         font-weight: 700;
@@ -282,14 +335,14 @@
       }
 
       .compact-sub {
-        font-size: 0.65rem; /* 10px - 作为补充说明 */
+        font-size: 0.65rem;
         color: #999;
         display: block;
         font-weight: 500;
         transform: scale(0.95);
       }
 
-      /* ================= 批发横幅 (Wholesale Banner) - 固定版 ================= */
+      /* ================= 批发横幅 (Wholesale Banner) ================= */
       .ws-banner {
         background: #222;
         color: #fff;
@@ -297,18 +350,16 @@
         text-align: center;
         transition: background 0.3s;
         position: sticky;
-        top: var(--header-height);
+        top: var(--total-top-spacing);
         z-index: 990;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
       }
 
-      /* 当有折扣处于激活状态时，背景变金色 */
       .ws-banner.active-tier {
         background: linear-gradient(135deg, #111 0%, #2a2a2a 100%);
         border-bottom: 3px solid #ffd700;
       }
 
-      /* 进度条容器 */
       .ws-progress-box {
         background: rgba(255, 255, 255, 0.1);
         border-radius: 4px;
@@ -328,7 +379,6 @@
         font-size: 1rem;
       }
 
-      /* 默认显示的 Pill */
       .ws-pills {
         display: flex;
         justify-content: center;
@@ -390,7 +440,7 @@
         padding: 20px 0;
         border-top: 1px solid #eee;
         border-bottom: 1px solid #eee;
-        scroll-margin-top: 130px;
+        scroll-margin-top: 170px;
         position: relative;
       }
 
@@ -415,7 +465,6 @@
         padding: 5px;
       }
 
-      /* 滚动容器包装器 */
       .scroll-container-wrapper {
         position: relative;
         padding: 0 5px;
@@ -435,7 +484,6 @@
         display: none;
       }
 
-      /* 左右箭头按钮 */
       .scroll-arrow-btn {
         position: absolute;
         top: 38%;
@@ -472,7 +520,6 @@
         right: 5px;
       }
 
-      /* 滚动指示器 */
       .scroll-progress-container {
         width: 60px;
         height: 4px;
@@ -561,6 +608,17 @@
         margin-bottom: 8px;
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
+      }
+      .stock-warning-text {
+        font-size: 0.7rem;
+        color: #d9534f;
+        font-weight: bold;
+        margin-left: 5px;
+        background: #ffe6e6;
+        padding: 1px 4px;
+        border-radius: 3px;
+        white-space: nowrap;
       }
       .scroll-card-add {
         font-size: 0.85rem;
@@ -654,6 +712,11 @@
         font-weight: bold;
         color: var(--accent-color);
         font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 5px;
       }
       .grid-add-btn {
         display: block;
@@ -668,7 +731,7 @@
         font-weight: bold;
       }
 
-      /* ===== Updated Pagination CSS ===== */
+      /* ===== Pagination CSS ===== */
       .pagination-container {
         display: flex;
         justify-content: center;
@@ -956,6 +1019,84 @@
     </style>
   </head>
   <body>
+    <div id="trust-badge-bar">
+      <div id="trust-slider">
+        <div class="trust-slide-item">🎉 Free Shipping on All Orders</div>
+        <div class="trust-slide-item" id="dynamic-sales-text">
+          Loading Updates...
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const csvUrl =
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vTwZ_BgnXtX_ZdO87jkvLU_IMUByJwFKZoyzVVI0Sghwe-2_Qq676JsqsrO0AnGubJGuCxonKizijyj/pub?gid=280068085&single=true&output=csv";
+
+        const slider = document.getElementById("trust-slider");
+        const dynamicText = document.getElementById("dynamic-sales-text");
+
+        async function fetchSalesData() {
+          try {
+            const response = await fetch(csvUrl);
+            if (!response.ok) throw new Error("Network response was not ok");
+            const data = await response.text();
+
+            const parts = data.split(/[, \n]+/);
+            let salesNum = "";
+            let salesDate = "";
+
+            for (let i = 0; i < parts.length; i++) {
+              let cell = parts[i].replace(/['"]+/g, "").trim();
+              if (!salesNum && !isNaN(cell) && cell.length > 2) {
+                salesNum = cell;
+              }
+              if (
+                !salesDate &&
+                (cell.includes("Dec") ||
+                  cell.includes("Jan") ||
+                  cell.includes("Feb") ||
+                  cell.includes("Mar") ||
+                  cell.includes("Apr") ||
+                  cell.includes("May") ||
+                  cell.includes("Jun") ||
+                  cell.includes("Jul") ||
+                  cell.includes("Aug") ||
+                  cell.includes("Sep") ||
+                  cell.includes("Oct") ||
+                  cell.includes("Nov"))
+              ) {
+                salesDate = cell;
+                if (parts[i + 1] && !isNaN(parts[i + 1])) {
+                  salesDate += " " + parts[i + 1];
+                }
+              }
+            }
+
+            if (salesNum && salesNum.length > 0) {
+              if (!salesDate) salesDate = "Recently";
+              // 更新第二块滑块的内容
+              dynamicText.innerHTML = `🔥 Total Sold: ${salesNum} (Updated: ${salesDate})`;
+
+              // 5秒切换一次 Slide 类
+              setInterval(() => {
+                slider.classList.toggle("slide-up-active");
+              }, 5000);
+            } else {
+              // 如果没有数据，隐藏第二个滑块，只显示第一句话
+              dynamicText.style.display = "none";
+            }
+          } catch (error) {
+            console.log("无法读取销量数据", error);
+            // 失败时也只显示第一句话
+            dynamicText.style.display = "none";
+          }
+        }
+
+        fetchSalesData();
+      })();
+    </script>
+
     <header class="site-header">
       <div class="header-left" id="menu-trigger">
         <span class="hamburger-icon">☰</span>
@@ -1128,7 +1269,7 @@
             See Policy
           </button>
         </div>
-        <a href="https://wa.me/16232027321" target="_blank" class="trust-item">
+        <a href="https://wa.me/17253041220" target="_blank" class="trust-item">
           <div style="font-size: 2rem; color: #2ecc71; margin-bottom: 10px">
             💬
           </div>
@@ -1169,6 +1310,8 @@
             id="modal-sub"
             style="color: #666; font-size: 0.85rem; margin-bottom: 8px"
           ></div>
+
+          <div id="modal-stock" style="margin-bottom: 8px"></div>
 
           <div
             id="modal-price"
@@ -1272,17 +1415,21 @@
         }, 50);
       });
 
-      // ================= 核心修复代码：监听 pageshow =================
       window.addEventListener("pageshow", function (event) {
         loadCart();
       });
 
-      // --- Helper: 获取购物车总数量 ---
       function getCartTotalQty() {
         return cartItems.reduce((s, i) => s + i.quantity, 0);
       }
 
-      // --- Helper: 更新首页批发横幅 ---
+      function getStockHtml(inventory) {
+        if (inventory && !isNaN(inventory) && inventory > 0 && inventory < 50) {
+          return `<span class="stock-warning-text">Only ${inventory} left!</span>`;
+        }
+        return "";
+      }
+
       function updateWholesaleBanner() {
         const qty = getCartTotalQty();
         const banner = document.getElementById("wholesale-banner");
@@ -1508,6 +1655,8 @@
             ? `<span class="gender-tag ${genderClass}">${p.gender}</span>`
             : "";
 
+          const stockHtml = getStockHtml(p.inventory);
+
           card.innerHTML = `
             <div style="position:relative;">
                ${imgHtml}
@@ -1522,6 +1671,7 @@
             </div>
             <div class="scroll-card-price">
                 $${p.price} 
+                ${stockHtml}
                 <span style="font-size:0.75rem; color:#666; font-weight:normal; margin-left:5px;">
                     ${p.ml ? p.ml + "ml" : ""}
                 </span>
@@ -1574,8 +1724,6 @@
         return section;
       }
 
-      // ================= 核心逻辑升级：品牌锁定搜索 (Search Logic) =================
-
       const BRAND_ALIASES = {
         lv: "Louis Vuitton",
         "louis vuitton": "Louis Vuitton",
@@ -1606,23 +1754,15 @@
         jpg: "JEAN PAUL GAULTIER",
       };
 
-      /**
-       * 辅助函数：尝试从搜索词中提取“目标品牌”
-       */
       function detectBrandIntent(rawTerm) {
         const lowerTerm = rawTerm.toLowerCase().trim();
         const tokens = lowerTerm.split(/\s+/);
-
-        // 1. 检查完整短语匹配
         for (const [key, brandName] of Object.entries(BRAND_ALIASES)) {
           if (lowerTerm.includes(key)) return brandName;
         }
-
-        // 2. 检查单词匹配
         for (const token of tokens) {
           if (BRAND_ALIASES[token]) return BRAND_ALIASES[token];
         }
-
         return null;
       }
 
@@ -1636,25 +1776,20 @@
 
       function calculateRelevanceScore(product, searchTokens) {
         let score = 0;
-        // FIX: 不再使用 JSON.stringify 全局搜索
-        // FIX: 不再搜索 Notes
         const pId = (product.id || "").toString().toLowerCase();
         const pName = (product.name || "").toLowerCase();
         const pBrand = (product.brand || "").toLowerCase();
 
         searchTokens.forEach((token) => {
           if (token.length < 1) return;
-
-          // FIX: 改为包含匹配，解决 "100" 搜不到 "a100" 的问题
-          if (pId.includes(token)) score += 100; // 编号匹配
-
-          if (pBrand.includes(token)) score += 60; // 品牌匹配
-          if (pName.includes(token)) score += 50; // 名称匹配
+          if (pId.includes(token)) score += 100;
+          if (pBrand.includes(token)) score += 60;
+          if (pName.includes(token)) score += 50;
         });
         return score;
       }
 
-      // --- 2. Grid 渲染 (已更新逻辑) ---
+      // --- 2. Grid 渲染 ---
       function switchToGrid(criteria) {
         viewMode = "grid";
         document.getElementById("home-view").style.display = "none";
@@ -1695,7 +1830,6 @@
           const searchTokens = normalizeAndTokenize(rawTerm);
 
           if (targetBrand) {
-            // 【品牌锁定逻辑】
             let brandProducts = db.filter(
               (p) => p.brand.toLowerCase() === targetBrand.toLowerCase()
             );
@@ -1722,7 +1856,6 @@
             }
             title = `Brand Results: "${targetBrand}"`;
           } else {
-            // 【普通搜索逻辑】
             let scoredProducts = db
               .map((p) => ({
                 product: p,
@@ -1740,7 +1873,6 @@
           });
           title = "More Brands";
         } else {
-          // 侧边栏品牌点击 (精准匹配)
           filtered = db.filter((p) => p.brand === criteria);
           title = criteria;
         }
@@ -1785,6 +1917,8 @@
             ? ` · <span class="gender-tag ${genderClass}">${p.gender}</span>`
             : "";
 
+          const stockHtml = getStockHtml(p.inventory);
+
           div.innerHTML = `
               <div class="item-img-box skeleton-loader" onclick="openModalById('${
                 p.id
@@ -1809,7 +1943,10 @@
                     ${p.brand}${genderText} <br>
                     ${formatSize(p)}
                  </div>
-                 <div class="item-price">$${p.price}</div>
+                 <div class="item-price">
+                    $${p.price}
+                    ${stockHtml}
+                 </div>
                  <button class="grid-add-btn" onclick="addToCart('${
                    p.id
                  }')">ADD TO CART</button>
@@ -1887,7 +2024,6 @@
         );
       }
 
-      // --- 3. 弹窗逻辑 ---
       window.openModal = function (product) {
         currentModalProductId = product.id;
         document.getElementById("modal-img").src = product.img;
@@ -1920,6 +2056,16 @@
             </div>
             ${notesHtml}
         `;
+
+        const stockEl = document.getElementById("modal-stock");
+        const stockVal = getStockHtml(product.inventory);
+        if (stockVal) {
+          stockEl.innerHTML = `<div style="color:#d9534f; font-weight:bold; font-size:0.95rem; border:1px solid #d9534f; display:inline-block; padding:3px 10px; border-radius:4px; background:#fff0f0;">🔥 Fast Moving: Only ${product.inventory} Left!</div>`;
+          stockEl.style.display = "block";
+        } else {
+          stockEl.style.display = "none";
+        }
+
         document.getElementById("modal-price").textContent =
           "$" + product.price;
         updateModalButtonState(product.id);
@@ -1931,7 +2077,6 @@
         if (p) openModal(p);
       };
 
-      // --- 4. 搜索与通用功能 ---
       function setupSearch() {
         const globalSearch = document.getElementById("global-search-input");
         globalSearch.addEventListener("change", (e) => {
