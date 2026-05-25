@@ -284,6 +284,191 @@
         margin-left: 3px;
       }
 
+      /* ================= Mobile Quick Guide ================= */
+      .quick-guide {
+        margin: 8px 10px;
+        padding: 12px;
+        background:
+          linear-gradient(135deg, rgba(255, 215, 0, 0.12), transparent 42%),
+          #101010;
+        color: #fff;
+        border: 1px solid rgba(255, 215, 0, 0.32);
+        border-radius: 8px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+        position: relative;
+      }
+      .quick-guide.hidden {
+        display: none;
+      }
+      .quick-guide-restore {
+        display: none;
+        margin: 8px 10px;
+        text-align: right;
+      }
+      .quick-guide-restore.visible {
+        display: block;
+      }
+      .quick-guide-restore-btn {
+        min-height: 34px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(178, 137, 0, 0.45);
+        background: #fff;
+        color: #111;
+        cursor: pointer;
+        font-size: 0.78rem;
+        font-weight: 800;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      .quick-guide-copy {
+        padding-right: 64px;
+      }
+      .quick-guide-title {
+        margin: 0 0 3px;
+        font-size: 1.05rem;
+        line-height: 1.15;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+      .quick-guide-subtitle {
+        margin: 0 0 10px;
+        color: #f2d166;
+        font-size: 0.82rem;
+        font-weight: 700;
+        line-height: 1.35;
+      }
+      .quick-guide-actions {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+      }
+      .quick-guide-action {
+        width: 100%;
+        min-height: 42px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0;
+        line-height: 1.15;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .quick-guide-action:active,
+      .quick-guide-action.active {
+        background: #ffd700;
+        color: #000;
+        border-color: #ffd700;
+      }
+      .quick-guide-hide {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.68);
+        cursor: pointer;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .quick-brand-panel {
+        display: none;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 215, 0, 0.2);
+      }
+      .quick-brand-panel.expanded {
+        display: block;
+      }
+      .quick-brand-title {
+        margin: 0 0 8px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: #f2d166;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .quick-brand-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .quick-brand-btn {
+        min-height: 38px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 215, 0, 0.38);
+        background: rgba(255, 255, 255, 0.92);
+        color: #111;
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+      .quick-brand-more {
+        margin-top: 10px;
+        color: #ffd700;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 800;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .menu-guide-link {
+        color: var(--accent-color);
+        border-bottom-color: #f1e0a5;
+      }
+      @media (min-width: 520px) {
+        .quick-guide {
+          max-width: 760px;
+          margin: 12px auto 14px;
+          padding: 14px 18px;
+        }
+        .quick-guide-restore {
+          max-width: 760px;
+          margin: 10px auto;
+        }
+        .quick-guide-action {
+          font-size: 0.9rem;
+        }
+      }
+      @media (max-width: 340px) {
+        .quick-guide-action {
+          font-size: 0.72rem;
+        }
+      }
+
+      .back-to-top-btn {
+        position: fixed;
+        right: 16px;
+        bottom: 108px;
+        z-index: 981;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: #000;
+        color: #ffd700;
+        border: 1px solid rgba(255, 215, 0, 0.65);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(8px);
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease,
+          visibility 0.2s ease;
+      }
+      .back-to-top-btn.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
       /* ================= NEW Floating Capsule Bottom Bar (Split Pill Design) ================= */
       .bottom-nav-bar {
         position: fixed;
@@ -854,16 +1039,19 @@
       }
       .modal-close {
         position: absolute;
-        top: 10px;
-        right: 10px;
+        top: 8px;
+        right: 8px;
         font-size: 1.8rem;
         cursor: pointer;
         z-index: 10;
-        width: 36px;
-        height: 36px;
+        width: 48px;
+        height: 48px;
         background: rgba(0, 0, 0, 0.1);
         border-radius: 50%;
-        line-height: 34px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .modal-img {
         width: 100%;
@@ -873,6 +1061,18 @@
       }
       .modal-info {
         padding: 8px 15px;
+      }
+      .modal-back-btn {
+        width: 100%;
+        min-height: 38px;
+        margin-top: 10px;
+        border-radius: 6px;
+        background: #000;
+        color: #fff;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 800;
+        letter-spacing: 0;
       }
       .modal-notes-box {
         background-color: #f7f7f7;
@@ -994,6 +1194,9 @@
       <div class="sidebar-content">
         <nav>
           <a class="menu-link" onclick="handleMenuClick('Home')">Home</a>
+          <a class="menu-link menu-guide-link" onclick="showQuickGuideFromMenu()"
+            >Show Guide</a
+          >
           <a class="menu-link" onclick="handleMenuClick('All')">Shop All</a>
           <a
             class="menu-link"
@@ -1061,6 +1264,77 @@
     <div id="home-view">
       <div id="wholesale-banner" class="ws-banner">
         <div id="ws-content" class="ws-pills"></div>
+      </div>
+
+      <section
+        id="mobile-quick-guide"
+        class="quick-guide"
+        aria-label="Order guide"
+      >
+        <button
+          type="button"
+          class="quick-guide-hide"
+          onclick="hideQuickGuide()"
+        >
+          Hide Guide
+        </button>
+        <div class="quick-guide-copy">
+          <h1 class="quick-guide-title">Build Your Order List</h1>
+          <p class="quick-guide-subtitle">
+            Add items to cart. Discounts calculate automatically. Checkout
+            sends your list to WhatsApp.
+          </p>
+        </div>
+        <div class="quick-guide-actions">
+          <button
+            type="button"
+            class="quick-guide-action"
+            onclick="scrollToBestSellers()"
+          >
+            Best Sellers
+          </button>
+          <button
+            type="button"
+            class="quick-guide-action"
+            onclick="scrollToNewArrivals()"
+          >
+            New Arrivals
+          </button>
+          <button
+            type="button"
+            id="quick-brands-toggle"
+            class="quick-guide-action"
+            onclick="toggleQuickBrands()"
+          >
+            Popular Brands
+          </button>
+        </div>
+        <div
+          id="quick-brand-panel"
+          class="quick-brand-panel"
+          aria-label="Popular Brands"
+        >
+          <h2 class="quick-brand-title">Popular Brands</h2>
+          <div id="quick-brand-grid" class="quick-brand-grid"></div>
+          <button
+            type="button"
+            id="quick-brand-more"
+            class="quick-brand-more"
+            onclick="toggleQuickBrandLimit()"
+          >
+            Show More Brands
+          </button>
+        </div>
+      </section>
+
+      <div id="quick-guide-restore" class="quick-guide-restore">
+        <button
+          type="button"
+          class="quick-guide-restore-btn"
+          onclick="showQuickGuide()"
+        >
+          Show Guide
+        </button>
       </div>
 
       <div id="home-content">
@@ -1173,7 +1447,7 @@
       <div class="nav-right">
         <button
           class="checkout-pill-btn"
-          onclick="window.location.href = 'cart.html'"
+          onclick="sendOrderToWhatsApp()"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -1191,14 +1465,21 @@
       </div>
     </div>
 
+    <button
+      id="back-to-top-btn"
+      class="back-to-top-btn"
+      type="button"
+      aria-label="Back to top"
+      onclick="scrollToPageTop()"
+    >
+      TOP
+    </button>
+
     <div id="toast">Added to Cart! 🛒</div>
 
     <div id="modal" class="modal">
       <div class="modal-content">
-        <div
-          class="modal-close"
-          onclick="document.getElementById('modal').classList.remove('open')"
-        >
+        <div class="modal-close" onclick="closeProductModal()">
           &times;
         </div>
         <img id="modal-img" class="modal-img" src="" />
@@ -1222,6 +1503,13 @@
             "
           ></div>
           <div id="modal-action-area"></div>
+          <button
+            type="button"
+            class="modal-back-btn"
+            onclick="closeProductModal()"
+          >
+            Back
+          </button>
         </div>
       </div>
     </div>
@@ -1308,6 +1596,7 @@
       // ================= Tracking & Checkout Logic =================
       const GOOGLE_SCRIPT_URL =
         "https://script.google.com/macros/s/AKfycbyTu1LHtseu7j_v40r9Sp2ZbqLZ3ZrlWexqVUjjQhouK6zZPxnBLwaCL9LAbawLIFI/exec";
+      const WHATSAPP_NUMBER = "17253041220";
 
       function openTrackingModal() {
         document.getElementById("sidebar").classList.remove("active");
@@ -1385,9 +1674,9 @@
               // 渲染结果
               resultDiv.innerHTML = `
                 <div style="color:#28a745; font-weight:bold; margin-bottom:5px; font-size:1.1rem;">✅ Order Found!</div>
-                
+
                 <div style="background:#eee; height:1px; margin:10px 0;"></div>
-                
+
                 <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#555; margin-bottom:10px;">
                     <span>📅 Date: <b>${data.order_date || "N/A"}</b></span>
                     <span>👤 <b>${data.customer_name}</b></span>
@@ -1400,7 +1689,7 @@
                 <div style="text-align:left;">
                     ${trackHtml}
                 </div>
-                
+
                 <div style="font-size:0.75rem; color:#999; margin-top:5px; text-align:center;">
                     *Click icon to copy number
                 </div>
@@ -1445,6 +1734,13 @@
         "Burberry",
         "Versace",
       ];
+      const QUICK_SEARCH_BRANDS = [
+        "Prada",
+        "Byredo",
+        "Dolce and Gabbana",
+        "Amouage",
+        "Ralph Lauren",
+      ];
       const FEATURED_BRANDS_LOWER = FEATURED_BRANDS.map((b) => b.toLowerCase());
       const discountTiers = [
         { min: 1, max: 1, percent: 0 },
@@ -1465,10 +1761,14 @@
       let currentGridData = [];
       let viewMode = "home";
       let currentModalProductId = null;
+      let quickBrandsExpanded = true;
+      let quickBrandsShowAll = false;
 
       document.addEventListener("DOMContentLoaded", () => {
         loadCart();
         setupMenu();
+        setupQuickGuide();
+        setupBackToTop();
         renderSidebarBrands();
         setupModalBackdropClosing();
         setupSearch();
@@ -1584,6 +1884,69 @@
         }
       }
 
+      function getCartOrderSummary() {
+        let totalQty = 0;
+        let lvCount = 0;
+        let otherCount = 0;
+        let subtotal = 0;
+
+        cartItems.forEach((item) => {
+          const qty = Number(item.quantity) || 0;
+          const price = Number(item.price) || 0;
+          totalQty += qty;
+          subtotal += price * qty;
+          if ((item.caption || "").toLowerCase().includes("louis vuitton")) {
+            lvCount += qty;
+          } else {
+            otherCount += qty;
+          }
+        });
+
+        const tier =
+          discountTiers.find((t) => totalQty >= t.min && totalQty <= t.max) ||
+          discountTiers[0];
+        const discountPercent = tier ? tier.percent : 0;
+        const finalTotal = subtotal - subtotal * discountPercent;
+
+        return {
+          totalQty,
+          lvCount,
+          otherCount,
+          finalTotal,
+        };
+      }
+
+      window.sendOrderToWhatsApp = function () {
+        loadCart();
+        if (cartItems.length === 0) {
+          alert("Cart is empty");
+          return;
+        }
+
+        const { totalQty, lvCount, otherCount, finalTotal } =
+          getCartOrderSummary();
+
+        let msg = `*New Order Request* 📦\n`;
+        msg += `----------------------------\n`;
+
+        cartItems.forEach((item) => {
+          msg += `${item.caption} x *${item.quantity}*\n\n`;
+        });
+
+        msg += `----------------------------\n`;
+        msg += `LV Quantity: ${lvCount}\n`;
+        msg += `Other Quantity: ${otherCount}\n`;
+        msg += `*Total Quantity: ${totalQty} pcs*\n`;
+        msg += `----------------------------\n`;
+        msg += `*Total Amount:* $${Math.round(finalTotal).toFixed(2)}`;
+
+        const encodedMsg = encodeURIComponent(msg);
+        window.open(
+          `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMsg}`,
+          "_blank",
+        );
+      };
+
       function formatSize(item) {
         if (!item.ml) return "";
         if (isNaN(Number(item.ml))) return item.ml;
@@ -1619,6 +1982,191 @@
         otherDiv.onclick = () => scrollToBrand("Other");
         list.appendChild(otherDiv);
       }
+
+      function getQuickGuideHidden() {
+        try {
+          return localStorage.getItem("quickGuideHidden") === "1";
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function setQuickGuideHidden(hidden) {
+        try {
+          if (hidden) localStorage.setItem("quickGuideHidden", "1");
+          else localStorage.removeItem("quickGuideHidden");
+        } catch (e) {
+          // If localStorage is blocked, keep the guide usable for this page view.
+        }
+      }
+
+      function getQuickBrandLabel(brand) {
+        const labelMap = {
+          "Yves Saint Laurent": "YSL",
+          "Louis Vuitton": "LV",
+          "Maison Francis Kurkdjian": "MFK",
+          "Parfums de Marly": "PDM",
+          "Jean Paul Gaultier": "JPG",
+          "Bond No. 9": "BOND NO. 9",
+          "Dolce and Gabbana": "D&G",
+        };
+        return labelMap[brand] || brand.toUpperCase();
+      }
+
+      function setQuickGuideVisibility() {
+        const guide = document.getElementById("mobile-quick-guide");
+        const restore = document.getElementById("quick-guide-restore");
+        const hidden = getQuickGuideHidden();
+        if (guide) guide.classList.toggle("hidden", hidden);
+        if (restore) restore.classList.toggle("visible", hidden);
+      }
+
+      function setupQuickGuide() {
+        quickBrandsExpanded = true;
+        quickBrandsShowAll = false;
+        renderQuickGuideBrands();
+        updateQuickBrandPanel();
+        setQuickGuideVisibility();
+      }
+
+      function renderQuickGuideBrands() {
+        const grid = document.getElementById("quick-brand-grid");
+        const moreBtn = document.getElementById("quick-brand-more");
+        if (!grid || !moreBtn) return;
+
+        grid.innerHTML = "";
+        const featuredQuickItems = FEATURED_BRANDS.map((brand) => ({
+          brand,
+          mode: "scroll",
+          searchTerm: brand,
+        }));
+        const searchQuickItems = QUICK_SEARCH_BRANDS.map((brand) => ({
+          brand,
+          mode: "search",
+          searchTerm: brand,
+        }));
+        const quickBrandItems = [...featuredQuickItems, ...searchQuickItems];
+        const visibleBrands = quickBrandsShowAll
+          ? quickBrandItems
+          : quickBrandItems.slice(0, 10);
+
+        visibleBrands.forEach((item) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "quick-brand-btn";
+          btn.textContent = getQuickBrandLabel(item.brand);
+          btn.onclick = () => {
+            if (item.mode === "search")
+              switchToGrid("Search:" + item.searchTerm);
+            else window.scrollToBrand(item.brand);
+          };
+          grid.appendChild(btn);
+        });
+
+        moreBtn.style.display =
+          quickBrandItems.length > 10 ? "inline-block" : "none";
+        moreBtn.textContent = quickBrandsShowAll
+          ? "Show Less"
+          : "Show More Brands";
+      }
+
+      function updateQuickBrandPanel() {
+        const panel = document.getElementById("quick-brand-panel");
+        const toggle = document.getElementById("quick-brands-toggle");
+        if (!panel || !toggle) return;
+        panel.classList.toggle("expanded", quickBrandsExpanded);
+        toggle.classList.toggle("active", quickBrandsExpanded);
+      }
+
+      function ensureHomeView() {
+        if (viewMode !== "home") {
+          viewMode = "home";
+          document.getElementById("home-view").style.display = "block";
+          document.getElementById("grid-view").style.display = "none";
+        }
+      }
+
+      function scrollToHomeSection(sectionId, attempt = 0) {
+        ensureHomeView();
+        const section = document.getElementById(sectionId);
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+        if (attempt < 12) {
+          setTimeout(() => scrollToHomeSection(sectionId, attempt + 1), 100);
+        }
+      }
+
+      window.scrollToBestSellers = function () {
+        scrollToHomeSection("best-sellers-section");
+      };
+
+      window.scrollToNewArrivals = function () {
+        scrollToHomeSection("new-arrivals-section");
+      };
+
+      window.toggleQuickBrands = function () {
+        quickBrandsExpanded = !quickBrandsExpanded;
+        if (quickBrandsExpanded) {
+          quickBrandsShowAll = false;
+          renderQuickGuideBrands();
+        }
+        updateQuickBrandPanel();
+      };
+
+      window.toggleQuickBrandLimit = function () {
+        quickBrandsShowAll = !quickBrandsShowAll;
+        quickBrandsExpanded = true;
+        renderQuickGuideBrands();
+        updateQuickBrandPanel();
+      };
+
+      window.hideQuickGuide = function () {
+        setQuickGuideHidden(true);
+        setQuickGuideVisibility();
+      };
+
+      window.skipQuickGuide = function () {
+        window.hideQuickGuide();
+      };
+
+      window.showQuickGuide = function () {
+        setQuickGuideHidden(false);
+        setQuickGuideVisibility();
+        ensureHomeView();
+        quickBrandsExpanded = true;
+        quickBrandsShowAll = false;
+        renderQuickGuideBrands();
+        updateQuickBrandPanel();
+        document.getElementById("sidebar").classList.remove("active");
+        document.getElementById("sidebar-overlay").classList.remove("active");
+        const guide = document.getElementById("mobile-quick-guide");
+        if (guide) {
+          guide.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      };
+
+      window.showQuickGuideFromMenu = function () {
+        window.showQuickGuide();
+      };
+
+      function updateBackToTopVisibility() {
+        const btn = document.getElementById("back-to-top-btn");
+        if (!btn) return;
+        btn.classList.toggle("visible", window.scrollY > 650);
+      }
+
+      function setupBackToTop() {
+        updateBackToTopVisibility();
+        window.addEventListener("scroll", updateBackToTopVisibility, {
+          passive: true,
+        });
+      }
+
+      window.scrollToPageTop = function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
 
       function generatePictureHTML(src, alt) {
         const webpSrc = src.replace(/\.(jpg|png|jpeg)$/i, ".webp");
@@ -1657,10 +2205,11 @@
 
         const renderSection = (title, items, filterKey) => {
           const section = createBrandSection(title, items, filterKey);
-          if (
-            filterKey &&
-            !["BestSellers", "New", "Sale"].includes(filterKey)
-          ) {
+          if (filterKey === "BestSellers") {
+            section.id = "best-sellers-section";
+          } else if (filterKey === "New") {
+            section.id = "new-arrivals-section";
+          } else if (filterKey && !["Sale"].includes(filterKey)) {
             section.id = "brand-" + filterKey.replace(/\s+/g, "");
           }
           container.appendChild(section);
@@ -1862,13 +2411,57 @@
         bond: "Bond No. 9",
         "bond no 9": "Bond No. 9",
         jpg: "JEAN PAUL GAULTIER",
+        prada: "Prada",
+        byredo: "Byredo",
+        amouage: "Amouage",
+        dolce: "Dolce & Gabbana",
+        gabbana: "Dolce & Gabbana",
+        ralph: "Ralph Lauren",
+        "ralph lauren": "Ralph Lauren",
+        "dolce gabbana": "Dolce & Gabbana",
+        "dolce and gabbana": "Dolce & Gabbana",
+        "d&g": "Dolce & Gabbana",
+        viktor: "Viktor & Rolf",
+        rolf: "Viktor & Rolf",
+        "viktor rolf": "Viktor & Rolf",
+        "viktor and rolf": "Viktor & Rolf",
+        "viktor & rolf": "Viktor & Rolf",
       };
+      const SEARCH_STOPWORDS = new Set([
+        "a",
+        "an",
+        "and",
+        "de",
+        "el",
+        "for",
+        "la",
+        "le",
+        "of",
+        "the",
+      ]);
+
+      function normalizeSearchText(text) {
+        return (text || "")
+          .toString()
+          .toLowerCase()
+          .replace(/&/g, " and ")
+          .replace(/[^a-z0-9]+/g, " ")
+          .trim()
+          .replace(/\s+/g, " ");
+      }
 
       function detectBrandIntent(rawTerm) {
-        const lowerTerm = rawTerm.toLowerCase().trim();
+        const lowerTerm = normalizeSearchText(rawTerm);
+        const compactTerm = lowerTerm
+          .replace(/\band\b/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
         const tokens = lowerTerm.split(/\s+/);
         for (const [key, brandName] of Object.entries(BRAND_ALIASES)) {
-          if (lowerTerm.includes(key)) return brandName;
+          const normalizedKey = normalizeSearchText(key);
+          if (lowerTerm === normalizedKey || lowerTerm.includes(normalizedKey))
+            return brandName;
+          if (compactTerm && compactTerm === normalizedKey) return brandName;
         }
         for (const token of tokens) {
           if (BRAND_ALIASES[token]) return BRAND_ALIASES[token];
@@ -1876,17 +2469,15 @@
         return null;
       }
       function normalizeAndTokenize(rawTerm) {
-        return rawTerm
-          .toLowerCase()
-          .trim()
+        return normalizeSearchText(rawTerm)
           .split(/\s+/)
-          .filter((t) => t.length > 0);
+          .filter((t) => t.length > 0 && !SEARCH_STOPWORDS.has(t));
       }
       function calculateRelevanceScore(product, searchTokens) {
         let score = 0;
-        const pId = (product.id || "").toString().toLowerCase();
-        const pName = (product.name || "").toLowerCase();
-        const pBrand = (product.brand || "").toLowerCase();
+        const pId = normalizeSearchText(product.id);
+        const pName = normalizeSearchText(product.name);
+        const pBrand = normalizeSearchText(product.brand);
         searchTokens.forEach((token) => {
           if (token.length < 1) return;
           if (pId.includes(token)) score += 100;
@@ -1894,6 +2485,13 @@
           if (pName.includes(token)) score += 50;
         });
         return score;
+      }
+      function matchesAllSearchTokens(product, searchTokens) {
+        if (searchTokens.length === 0) return false;
+        const haystack = normalizeSearchText(
+          `${product.id || ""} ${product.brand || ""} ${product.name || ""}`,
+        );
+        return searchTokens.every((token) => haystack.includes(token));
       }
 
       // --- Grid Render ---
@@ -1952,14 +2550,20 @@
           const searchTokens = normalizeAndTokenize(rawTerm);
           if (targetBrand) {
             let brandProducts = db.filter(
-              (p) => p.brand.toLowerCase() === targetBrand.toLowerCase(),
+              (p) =>
+                normalizeSearchText(p.brand) ===
+                normalizeSearchText(targetBrand),
             );
             let remainingTokens = searchTokens.filter(
               (t) =>
                 !Object.keys(BRAND_ALIASES).some(
-                  (k) =>
-                    BRAND_ALIASES[k] === targetBrand &&
-                    (k.includes(t) || t.includes(k)),
+                  (k) => {
+                    const normalizedKey = normalizeSearchText(k);
+                    return (
+                      BRAND_ALIASES[k] === targetBrand &&
+                      (normalizedKey.includes(t) || t.includes(normalizedKey))
+                    );
+                  },
                 ),
             );
             if (remainingTokens.length > 0) {
@@ -1968,7 +2572,11 @@
                   product: p,
                   score: calculateRelevanceScore(p, remainingTokens),
                 }))
-                .filter((item) => item.score > 0);
+                .filter(
+                  (item) =>
+                    item.score > 0 &&
+                    matchesAllSearchTokens(item.product, remainingTokens),
+                );
               scored.sort((a, b) => b.score - a.score);
               filtered = scored.map((item) => item.product);
             } else {
@@ -1981,7 +2589,11 @@
                 product: p,
                 score: calculateRelevanceScore(p, searchTokens),
               }))
-              .filter((item) => item.score > 0);
+              .filter(
+                (item) =>
+                  item.score > 0 &&
+                  matchesAllSearchTokens(item.product, searchTokens),
+              );
             scoredProducts.sort((a, b) => b.score - a.score);
             filtered = scoredProducts.map((item) => item.product);
             title = `Results: "${rawTerm}"`;
@@ -2150,9 +2762,17 @@
 
       function setupSearch() {
         const globalSearch = document.getElementById("global-search-input");
-        globalSearch.addEventListener("change", (e) => {
+        const runSearch = (e) => {
           const val = e.target.value.trim();
           if (val) switchToGrid("Search:" + val);
+        };
+        globalSearch.addEventListener("change", runSearch);
+        globalSearch.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            runSearch(e);
+            globalSearch.blur();
+          }
         });
       }
 
@@ -2181,7 +2801,12 @@
           const targetId = "brand-" + safeName;
           const element = document.getElementById(targetId);
           if (element) {
-            const headerOffset = 65;
+            const header = document.querySelector(".site-header");
+            const banner = document.getElementById("wholesale-banner");
+            const headerOffset =
+              (header ? header.offsetHeight : 0) +
+              (banner ? banner.offsetHeight : 0) +
+              16;
             const elementPosition = element.getBoundingClientRect().top;
             const offsetPosition =
               elementPosition + window.pageYOffset - headerOffset;
@@ -2201,6 +2826,11 @@
         trigger.onclick = toggle;
         overlay.onclick = toggle;
       }
+
+      window.closeProductModal = function () {
+        document.getElementById("modal").classList.remove("open");
+        currentModalProductId = null;
+      };
 
       // Toast 函数供页面任何位置调用
       function showToast(msg) {
